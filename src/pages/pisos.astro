@@ -1,0 +1,43 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import SectionHeading from "@components/ui/SectionHeading.astro";
+import ProductCard from "@components/ui/ProductCard.astro";
+import SpcAnatomy from "@components/floors/SpcAnatomy.astro";
+import { floorProducts } from "@data/products";
+import bannerSpc from "@assets/images/floors/spc-ambiente-interior.png";
+---
+<BaseLayout title="Pisos y Revestimientos — D'ENERCON" active="pisos">
+  <!-- Banner superior: partnership SLS -->
+  <header class="py-16 md:py-20 container-site">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+      <div class="flex flex-col space-y-4 order-2 lg:order-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-sky/40 text-blue rounded-full w-fit">
+          <span class="material-symbols-outlined text-sm">verified</span>
+          <span class="text-xs font-bold uppercase tracking-wide">Partnership oficial</span>
+        </div>
+        <h1 class="text-4xl lg:text-5xl font-bold text-navy leading-tight">Excelencia en superficies de alta gama</h1>
+        <p class="text-lg text-navy/70 max-w-xl">
+          Descubra nuestra división especializada en pisos y revestimientos. En alianza estratégica con
+          <strong class="text-navy"> SLS Saintlosi</strong>, ofrecemos soluciones arquitectónicas que combinan
+          diseño vanguardista, durabilidad industrial y un acabado premium inigualable.
+        </p>
+      </div>
+      <div class="order-1 lg:order-2 h-64 lg:h-96 w-full rounded-brand overflow-hidden shadow-sm border border-navy/10">
+        <Image src={bannerSpc} alt="Interior de alta gama con piso SPC roble claro." widths={[768, 1280, 1920]} sizes="(max-width: 1024px) 100vw, 50vw" class="w-full h-full object-cover" />
+      </div>
+    </div>
+  </header>
+
+  <!-- Catálogo -->
+  <section class="bg-white py-16 md:py-20">
+    <div class="container-site">
+      <SectionHeading title="Catálogo de productos" accent="blue" />
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
+        {floorProducts.map((p) => <ProductCard product={p} accent="blue" />)}
+      </div>
+    </div>
+  </section>
+
+  <SpcAnatomy />
+</BaseLayout>

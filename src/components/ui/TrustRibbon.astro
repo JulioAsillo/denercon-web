@@ -1,0 +1,23 @@
+---
+import { certifications } from "@data/certifications";
+// Duplicamos la lista para el efecto de scroll infinito
+const loop = [...certifications, ...certifications];
+---
+<section class="w-full bg-navy py-8 overflow-hidden relative flex flex-col items-center marquee-container">
+  <p class="text-sky/60 text-xs tracking-[0.2em] uppercase mb-6 font-semibold">
+    Respaldados por normativas internacionales
+  </p>
+
+  <div class="flex w-max animate-marquee">
+    {loop.map((cert) => (
+        <div class="flex items-center gap-2 px-8 opacity-50 hover:opacity-100 transition-opacity duration-300 cursor-default shrink-0">
+          <span class="material-symbols-outlined text-sky text-[28px]">verified</span>
+          <span class="text-white font-bold text-lg tracking-widest whitespace-nowrap">{cert}</span>
+        </div>
+    ))}
+  </div>
+
+  <!-- Gradientes laterales para suavizar entrada/salida -->
+  <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-navy to-transparent pointer-events-none"></div>
+  <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-navy to-transparent pointer-events-none"></div>
+</section>

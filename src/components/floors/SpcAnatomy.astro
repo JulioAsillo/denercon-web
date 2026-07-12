@@ -1,0 +1,58 @@
+---
+const layers = [
+  { n: 1, title: "Filtro UV superior", desc: "Protege el diseño contra la decoloración por luz solar, garantizando colores vivos por años." },
+  { n: 2, title: "Capa de desgaste transparente", desc: "Escudo de alta resistencia a la abrasión, arañazos y alto tránsito comercial." },
+  { n: 3, title: "Película decorativa HD", desc: "Texturas mate en alta definición que replican la madera natural de forma hiperrealista." },
+  { n: 4, title: "Núcleo rígido SPC", desc: "Compuesto de 40% polvo de piedra y polímeros. 100% impermeable e ignífugo." },
+  { n: 5, title: "Aislante acústico integrado", desc: "Base que absorbe el sonido de impacto y facilita la instalación sobre contrapiso." },
+];
+---
+<section class="container-site py-16 md:py-20">
+  <div class="bg-white rounded-brand shadow-sm overflow-hidden border border-navy/10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 group spc-perspective">
+
+      <!-- Izquierda: textos interactivos -->
+      <div class="p-10 lg:p-16 flex flex-col justify-center relative z-10">
+        <span class="text-blue text-sm font-bold tracking-widest uppercase mb-2">Tecnología SLS Saintlosi</span>
+        <h2 class="text-3xl md:text-4xl font-black text-navy mb-8 leading-tight">
+          El núcleo de la<br>resistencia absoluta
+        </h2>
+        <div class="space-y-3 relative">
+          {layers.map((l) => (
+              <div class={`spc-trigger-${l.n} p-4 rounded-xl hover:bg-surface transition-colors cursor-default border-l-4 border-transparent hover:border-blue`}>
+                <h4 class="font-bold text-lg text-navy">{l.n}. {l.title}</h4>
+                <p class="text-sm text-navy/60 mt-1">{l.desc}</p>
+              </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Derecha: pila isométrica 3D -->
+      <div class="bg-navy min-h-[420px] lg:min-h-full flex items-center justify-center relative overflow-hidden spc-visual group-hover:bg-navy-90 transition-colors duration-500">
+        <div class="absolute bottom-6 right-6 text-white/40 text-xs tracking-widest uppercase flex items-center gap-2">
+          <span class="material-symbols-outlined text-base animate-bounce">touch_app</span>
+          Pasa el cursor
+        </div>
+
+        <div class="relative w-64 h-64 spc-stack">
+          <div class="spc-layer spc-layer-1 absolute inset-0 bg-sky/40 border border-sky rounded-sm backdrop-blur-sm flex items-center justify-center">
+            <span class="text-navy/60 font-bold text-xs -rotate-45">1. UV</span>
+          </div>
+          <div class="spc-layer spc-layer-2 absolute inset-0 bg-white/30 border border-white/50 rounded-sm backdrop-blur-md flex items-center justify-center">
+            <span class="text-navy/50 font-bold text-xs -rotate-45">2. WEAR</span>
+          </div>
+          <div class="spc-layer spc-layer-3 absolute inset-0 bg-blue border border-blue-70 rounded-sm flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 opacity-20 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,#000_10px,#000_11px)]"></div>
+            <span class="text-white font-bold text-xs -rotate-45 relative z-10">3. DECOR</span>
+          </div>
+          <div class="spc-layer spc-layer-4 absolute inset-0 bg-sky/70 border-2 border-sky rounded-sm flex items-center justify-center">
+            <span class="text-navy font-black text-lg -rotate-45">4. SPC CORE</span>
+          </div>
+          <div class="spc-layer spc-layer-5 absolute inset-0 bg-navy-90 border border-navy rounded-sm flex items-center justify-center">
+            <span class="text-sky/50 font-bold text-xs -rotate-45">5. PAD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

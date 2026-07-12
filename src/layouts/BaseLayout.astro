@@ -1,0 +1,46 @@
+---
+import "@/styles/global.css";
+import Navbar from "@components/layout/Navbar.astro";
+import Footer from "@components/layout/Footer.astro";
+import WhatsAppFab from "@components/layout/WhatsAppFab.astro";
+import { site } from "@data/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  active?: string;
+}
+const {
+  title = `${site.brand} — ${site.tagline}`,
+  description = site.description,
+  active = "",
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/brand/denercon-logo.png" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <!-- Tipografía de marca: Inter Tight -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <!-- Iconografía -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-surface text-navy antialiased selection:bg-sky selection:text-navy">
+    <Navbar active={active} />
+    <main class="pt-20">
+      <slot />
+    </main>
+    <Footer />
+    <WhatsAppFab />
+  </body>
+</html>

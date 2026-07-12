@@ -1,0 +1,80 @@
+---
+interface Props { active?: string; }
+const { active = "" } = Astro.props;
+const links = [
+  { href: "/", label: "Inicio", key: "inicio" },
+  { href: "/nosotros", label: "Nosotros", key: "nosotros" },
+  { href: "/pisos", label: "Pisos y Revestimientos", key: "pisos" },
+  { href: "/cortafuego", label: "Seguridad Cortafuego", key: "cortafuego" },
+];
+---
+<nav class="bg-surface/90 backdrop-blur-md fixed top-0 w-full z-50 border-b border-navy/10 shadow-sm">
+  <div class="container-site flex justify-between items-center h-20">
+    <a href="/" class="flex items-center" aria-label="D'ENERCON — Inicio">
+      <img src="/brand/denercon-logo.png" alt="D'ENERCON — Lo mejor para tu construcción" class="h-10 md:h-11 w-auto" width="1754" height="1241" />
+    </a>
+
+    <!-- Enlaces desktop -->
+    <div class="hidden md:flex items-center gap-6">
+      {links.map((l) => (
+          <a
+              href={l.href}
+              class={
+                active === l.key
+                    ? "text-navy font-bold border-b-2 border-blue pb-1"
+                    : "text-navy/70 hover:text-blue transition-colors text-sm font-medium uppercase tracking-wide"
+              }
+          >
+            {l.label}
+          </a>
+      ))}
+    </div>
+
+    <!-- Botón hamburguesa (solo móvil) -->
+    <button
+        id="menu-toggle"
+        class="md:hidden text-navy"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+    >
+      <span id="menu-icon" class="material-symbols-outlined text-3xl">menu</span>
+    </button>
+  </div>
+
+  <!-- Panel móvil desplegable -->
+  <div
+      id="mobile-menu"
+      class="md:hidden hidden bg-surface border-t border-navy/10 shadow-lg"
+  >
+    <div class="flex flex-col px-6 py-3">
+      {links.map((l) => (
+          <a
+              href={l.href}
+              class={
+                active === l.key
+                    ? "py-3 text-navy font-bold border-b border-navy/5"
+                    : "py-3 text-navy/70 hover:text-blue transition-colors border-b border-navy/5"
+              }
+          >
+            {l.label}
+          </a>
+      ))}
+    </div>
+  </div>
+</nav>
+
+<script>
+  const toggle = document.getElementById("menu-toggle");
+  const menu = document.getElementById("mobile-menu");
+  const icon = document.getElementById("menu-icon");
+
+  if (toggle && menu && icon) {
+    toggle.addEventListener("click", () => {
+      const isOpen = menu.classList.toggle("hidden") === false;
+      icon.textContent = isOpen ? "close" : "menu";
+      toggle.setAttribute("aria-expanded", String(isOpen));
+      toggle.setAttribute("aria-label", isOpen ? "Cerrar menú" : "Abrir menú");
+    });
+  }
+</script>

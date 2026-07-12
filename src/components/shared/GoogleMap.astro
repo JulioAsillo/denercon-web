@@ -1,0 +1,17 @@
+---
+import { site } from "@data/site";
+// Embed simple de Google Maps (sin API key). Para producción con pin exacto,
+// reemplazar por un embed generado desde Google Maps > Compartir > Insertar mapa.
+const q = encodeURIComponent(site.address);
+const src = `https://maps.google.com/maps?q=${q}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+---
+<div class="w-full h-full rounded-brand overflow-hidden border border-white/20 shadow-xl">
+  <iframe
+    title={`Ubicación ${site.brand} — ${site.address}`}
+    src={src}
+    class="w-full h-full"
+    style="border:0;"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+  ></iframe>
+</div>

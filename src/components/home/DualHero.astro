@@ -1,0 +1,31 @@
+---
+import { Image } from "astro:assets";
+import { waLink } from "@data/site";
+import heroFloors from "@assets/images/floors/spc-ambiente-interior.png";
+import heroFire from "@assets/images/fire/puerta-cf-corredor-rojo.png";
+---
+<section class="relative min-h-[calc(100vh-5rem)] w-full flex flex-col md:flex-row overflow-hidden">
+  <!-- Izquierda: Pisos -->
+  <div class="relative w-full md:w-1/2 h-[50vh] md:h-auto group overflow-hidden border-b md:border-b-0 md:border-r border-white/10">
+    <Image src={heroFloors} alt="Interior lujoso con piso SPC roble claro y luz natural." widths={[768, 1280, 1920, 2560]} sizes="(max-width: 768px) 100vw, 50vw" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+    <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-navy/90 via-navy/50 to-transparent"></div>
+    <div class="absolute inset-0 flex flex-col justify-end md:justify-center p-6 md:p-16 z-10">
+      <span class="text-sm font-bold text-sky mb-3 tracking-widest uppercase">Alta gama &amp; estética</span>
+      <h1 class="text-3xl md:text-5xl font-black text-white mb-6 max-w-lg leading-tight">Pisando el futuro del diseño de interiores</h1>
+      <p class="text-lg text-sky/90 mb-8 max-w-md hidden md:block">Importación exclusiva de pisos vinílicos SPC SLS Saintlosi, laminados HDF y Wall Panels.</p>
+      <a href="/pisos" class="w-fit px-8 py-3 bg-sky text-navy font-bold rounded-brand hover:bg-white transition-colors shadow-lg">Explorar línea de acabados</a>
+    </div>
+  </div>
+
+  <!-- Derecha: Cortafuego -->
+  <div class="relative w-full md:w-1/2 h-[50vh] md:h-auto group overflow-hidden">
+    <Image src={heroFire} alt="Corredor institucional con puerta cortafuego de acero roja." widths={[768, 1280, 1920, 2560]} sizes="(max-width: 768px) 100vw, 50vw" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+    <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-navy/90 via-navy/50 to-transparent"></div>
+    <div class="absolute inset-0 flex flex-col justify-end md:justify-center items-start md:items-end p-6 md:p-16 text-left md:text-right z-10">
+      <span class="text-sm font-bold text-fire mb-3 tracking-widest uppercase">Seguridad pasiva certificada</span>
+      <h1 class="text-3xl md:text-5xl font-black text-white mb-6 max-w-lg leading-tight">Protección absoluta contra incendios</h1>
+      <p class="text-lg text-sky/90 mb-8 max-w-md hidden md:block">Sistemas cortafuego integrales con homologación UL, FM y NFPA.</p>
+      <a href="/cortafuego" class="w-fit px-8 py-3 bg-fire text-white font-bold rounded-brand hover:brightness-110 transition-all shadow-lg">Explorar sistemas cortafuego</a>
+    </div>
+  </div>
+</section>

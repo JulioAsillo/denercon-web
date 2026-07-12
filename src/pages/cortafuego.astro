@@ -1,0 +1,27 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import ProductCard from "@components/ui/ProductCard.astro";
+import { fireProducts } from "@data/products";
+import bannerFondo from "@assets/images/fire/puerta-cf-almacen-fondo.png";
+---
+<BaseLayout title="Seguridad Pasiva y Cortafuego — D'ENERCON" active="cortafuego">
+  <!-- Banner header -->
+  <header class="relative w-full py-20 overflow-hidden -mt-20 pt-40 bg-navy text-white">
+    <Image src={bannerFondo} alt="Puertas cortafuego de acero en entorno industrial." widths={[1280, 1920, 2560, 3840]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover opacity-30" />
+    <div class="absolute inset-0 bg-navy/60"></div>
+    <div class="relative z-10 container-site">
+      <h1 class="text-4xl md:text-5xl font-black text-white mb-4">Seguridad pasiva y cortafuego</h1>
+      <p class="text-lg max-w-2xl text-sky/90">
+        Equipamiento certificado para vías de evacuación (UL, FM, NFPA). Diseñado para entornos industriales
+        y arquitectónicos exigentes.
+      </p>
+    </div>
+  </header>
+
+  <main class="py-16 md:py-20 container-site">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {fireProducts.map((p) => <ProductCard product={p} accent="fire" />)}
+    </div>
+  </main>
+</BaseLayout>

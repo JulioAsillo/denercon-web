@@ -1,0 +1,27 @@
+---
+import { waLink } from "@data/site";
+interface Props {
+  message: string;
+  label: string;
+  variant?: "solid" | "outline";
+  full?: boolean;
+  class?: string;
+}
+const { message, label, variant = "solid", full = false, class: cls = "" } = Astro.props;
+const base =
+  "inline-flex items-center justify-center gap-2 font-bold rounded-full py-3 px-6 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-whatsapp";
+const styles =
+  variant === "solid"
+    ? "bg-whatsapp text-white shadow-lg shadow-whatsapp/20 hover:bg-whatsapp-dark hover:-translate-y-0.5"
+    : "border border-whatsapp text-whatsapp hover:bg-whatsapp hover:text-white";
+const width = full ? "w-full" : "w-fit";
+---
+<a
+  href={waLink(message)}
+  target="_blank"
+  rel="noopener noreferrer"
+  class={`${base} ${styles} ${width} ${cls}`}
+>
+  <span class="material-symbols-outlined text-[20px]">chat</span>
+  {label}
+</a>

@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+/* ============================================================
+   D'ENERCON — Design tokens (Brandbook)
+   Paleta oficial:
+   #0B1F2E navy   · #3153A0 azul · #C1DAE5 celeste · #F4F4F4 gris
+   Tipografía: Inter Tight
+   ============================================================ */
+@theme {
+  /* Marca */
+  --color-navy: #0b1f2e;
+  --color-navy-90: #14293a;
+  --color-blue: #3153a0;
+  --color-blue-70: #4a6bb8;
+  --color-sky: #c1dae5;
+  --color-sky-30: #e8f1f6;
+  --color-surface: #f4f4f4;
+  --color-ink: #0b1f2e;
+
+  /* Acentos funcionales */
+  --color-fire: #c1121f;      /* señalética seguridad cortafuego */
+  --color-fire-soft: #fff5f5;
+  --color-whatsapp: #25d366;
+  --color-whatsapp-dark: #1ebe5d;
+
+  /* Tipografía */
+  --font-sans: "Inter Tight", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Radios */
+  --radius-brand: 0.5rem;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-sans);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+}
+
+/* Utilidad de contenedor centrado del sitio */
+.container-site {
+  margin-inline: auto;
+  max-width: 80rem; /* 1280px */
+  padding-inline: 1rem;
+}
+@media (min-width: 768px) {
+  .container-site {
+    padding-inline: 4rem;
+  }
+}
+
+/* Animación sutil del botón flotante */
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(-4%); }
+  50% { transform: translateY(0); }
+}
+.animate-bounce-subtle { animation: bounce-subtle 3s infinite ease-in-out; }
+
+/* Cinta de certificaciones — scroll infinito */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+.marquee-container:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+/* Anatomía SPC — pila isométrica 3D */
+.spc-perspective { perspective: 1000px; }
+.spc-stack {
+  transform: rotateX(55deg) rotateZ(-45deg);
+  transform-style: preserve-3d;
+}
+.spc-layer {
+  transition: all 0.4s ease;
+  box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Separación de capas al pasar el mouse por el bloque completo */
+.group:hover .spc-layer-1 { transform: translateZ(120px) translate(-20px, -20px); }
+.group:hover .spc-layer-2 { transform: translateZ(90px)  translate(-15px, -15px); }
+.group:hover .spc-layer-3 { transform: translateZ(60px)  translate(-10px, -10px); }
+.group:hover .spc-layer-4 { transform: translateZ(30px)  translate(-5px, -5px); }
+.group:hover .spc-layer-5 { transform: translateZ(0); }
+
+/* Resaltado al pasar el mouse sobre un texto puntual */
+.spc-trigger-1:hover ~ .spc-visual .spc-layer-1,
+.spc-trigger-2:hover ~ .spc-visual .spc-layer-2,
+.spc-trigger-3:hover ~ .spc-visual .spc-layer-3,
+.spc-trigger-4:hover ~ .spc-visual .spc-layer-4,
+.spc-trigger-5:hover ~ .spc-visual .spc-layer-5 {
+  transform: translateZ(40px) scale(1.05);
+  border: 2px solid var(--color-blue);
+}
+
