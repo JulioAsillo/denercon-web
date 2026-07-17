@@ -26,7 +26,7 @@ export type Product = {
 export const floorProducts: Product[] = [
   {
     id: "spc",
-    title: "Pisos Vinílicos SPC",
+    title: "Pisos SPC",
     subtitle: "Stone Plastic Composite",
     image: spcMacro,
     alt: "Macro de tabla SPC con gota de agua perlada sobre la veta de madera.",
@@ -112,8 +112,8 @@ export const fireProducts: Product[] = [
     image: herrajes,
     alt: "Flat-lay de herrajes premium: cerraduras ANSI, cierrapuertas F8500, cinta intumescente.",
     features: [
-      { icon: "lock", text: "Manijas Dortec y cerraduras ANSI Grado 2" },
-      { icon: "door_back", text: "Cierrapuertas F8500 / F8900" },
+      { icon: "lock", text: "Manijas y cerraduras ANSI Grado 2" },
+      { icon: "door_back", text: "Cierrapuertas UL" },
       { icon: "local_fire_department", text: "Cinta intumescente italiana" },
       { icon: "border_bottom", text: "Sellos barredores y perimetrales" },
     ],
