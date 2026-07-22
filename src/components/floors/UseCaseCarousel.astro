@@ -1,16 +1,14 @@
 ---
 /**
- * UseCaseCarousel.astro — Carrusel full-width de casos de uso (/pisos)
+ * UseCaseCarousel.astro — Casos de uso (/pisos)
  * -----------------------------------------------------------------------------
- * Autoplay, 3 visibles en desktop / 1 en mobile. Cada imagen lleva etiqueta
- * "Uso en …" derivada del nombre de archivo.
+ * Banda FULL-BLEED (todo el ancho de pantalla, hasta 4K). Una imagen a la vez
+ * con crossfade; la etiqueta "Uso en …" aparece con un fade-up en cada cambio.
  *
- * COLOCAR IMÁGENES EN:  src/assets/images/floors/casos-uso/
- *   Formato de nombre:  caso-<ambiente>-NN.(png|jpg)   2400x1350 (16:9)
- *   ej: caso-terraza-01.png  ->  "Uso en terraza"
- *       caso-sala-comedor-02.png -> "Uso en sala comedor"
- *
- * Si la carpeta está vacía, la sección NO se renderiza (no rompe el build).
+ * Imágenes en:  src/assets/images/floors/casos-uso/
+ *   caso-<ambiente>-NN.(png|jpg)  2400x1350 (16:9)
+ *   caso-terraza-01.png -> "Uso en terraza"
+ * Carpeta vacía → la sección no se renderiza (no rompe el build).
  */
 import { Image } from "astro:assets";
 import SectionHeading from "@components/ui/SectionHeading.astro";
@@ -22,10 +20,10 @@ const modules = import.meta.glob<CaseModule>(
 );
 
 function labelFromPath(path: string): string {
-  const file = path.split("/").pop()!.replace(/\.[^.]+$/, ""); // caso-terraza-01
+  const file = path.split("/").pop()!.replace(/\.[^.]+$/, "");
   const amb = file
     .replace(/^caso-/, "")
-    .replace(/[-_]?\d+$/, "")   // quita sufijo numérico
+    .replace(/[-_]?\d+$/, "")
     .replace(/[-_]/g, " ")
     .trim();
   return `Uso en ${amb}`;
@@ -37,31 +35,31 @@ const cases = Object.entries(modules)
 ---
 
 {cases.length > 0 && (
-  <section class="bg-surface py-14 md:py-20 overflow-hidden">
-    <div class="container-site mb-8">
+  <section class="bg-navy">
+    <div class="container-site pt-14 md:pt-20 pb-6 md:pb-8">
       <SectionHeading title="Casos de uso" accent="blue" />
     </div>
 
-    <div class="uc-carousel relative" data-uc>
-      <div class="uc-track flex transition-transform duration-700 ease-out">
-        {cases.map((c) => (
-          <figure class="uc-slide relative shrink-0 px-2">
-            <div class="relative aspect-video overflow-hidden rounded-brand">
-              <Image
-                src={c.src}
-                alt={c.label}
-                widths={[600, 900, 1200]}
-                sizes="(max-width: 768px) 90vw, 33vw"
-                class="w-full h-full object-cover"
-              />
-              <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-navy/80 to-transparent"></div>
-              <figcaption class="absolute left-4 bottom-3 text-white font-bold text-sm md:text-base uppercase tracking-wide">
-                {c.label}
-              </figcaption>
-            </div>
-          </figure>
-        ))}
-      </div>
+    <div
+      class="uc relative w-full overflow-hidden h-[58vh] min-h-[420px] max-h-[900px]"
+      data-uc
+    >
+      {cases.map((c, i) => (
+        <figure class={`uc-slide absolute inset-0 ${i === 0 ? "is-active" : ""}`}>
+          <Image
+            src={c.src}
+            alt={c.label}
+            widths={[1280, 1920, 2560, 3840]}
+            sizes="100vw"
+            loading={i === 0 ? "eager" : "lazy"}
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/25 to-transparent"></div>
+          <figcaption class="uc-label absolute left-6 md:left-16 2xl:left-28 bottom-8 md:bottom-14 text-white font-black uppercase tracking-wide text-2xl md:text-4xl 2xl:text-5xl drop-shadow-lg">
+            {c.label}
+          </figcaption>
+        </figure>
+      ))}
 
       {cases.length > 1 && (
         <>
@@ -71,6 +69,7 @@ const cases = Object.entries(modules)
           <button type="button" class="uc-arrow uc-next" aria-label="Siguiente">
             <span class="material-symbols-outlined">chevron_right</span>
           </button>
+          <div class="uc-dots absolute left-1/2 -translate-x-1/2 bottom-5 flex gap-2 z-10"></div>
         </>
       )}
     </div>
@@ -78,53 +77,74 @@ const cases = Object.entries(modules)
 )}
 
 <style>
-  .uc-slide { width: 100%; }
-  @media (min-width: 768px) {
-    .uc-slide { width: 33.3333%; }
+  .uc-slide { opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
+  .uc-slide.is-active { opacity: 1; pointer-events: auto; }
+
+  /* La etiqueta entra con fade-up cada vez que su slide se activa */
+  .uc-label { opacity: 0; transform: translateY(14px); }
+  .uc-slide.is-active .uc-label {
+    animation: ucLabelIn 0.7s 0.25s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   }
+  @keyframes ucLabelIn { to { opacity: 1; transform: translateY(0); } }
+
   .uc-arrow {
-    position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
-    width: 44px; height: 44px; display: grid; place-items: center;
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+    width: 48px; height: 48px; display: grid; place-items: center;
     border: none; border-radius: 999px; cursor: pointer;
-    color: var(--color-navy); background: rgba(255,255,255,0.9);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.15); transition: background .2s ease;
+    color: var(--color-navy); background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.25); transition: background 0.2s ease;
   }
   .uc-arrow:hover { background: #fff; }
-  .uc-prev { left: 12px; }
-  .uc-next { right: 12px; }
+  .uc-prev { left: 16px; }
+  .uc-next { right: 16px; }
+  @media (min-width: 1536px) {
+    .uc-arrow { width: 60px; height: 60px; }
+    .uc-prev { left: 32px; }
+    .uc-next { right: 32px; }
+  }
+
+  .uc-dot {
+    width: 9px; height: 9px; border: none; border-radius: 999px; padding: 0;
+    background: rgba(255, 255, 255, 0.45); cursor: pointer; transition: all 0.2s ease;
+  }
+  .uc-dot.is-active { background: #fff; width: 26px; }
 </style>
 
 <script>
   function initUseCase() {
     document.querySelectorAll<HTMLElement>("[data-uc]").forEach((root) => {
-      const track = root.querySelector<HTMLElement>(".uc-track");
-      const slides = root.querySelectorAll(".uc-slide");
-      if (!track || slides.length === 0) return;
-
-      const visible = () => (window.matchMedia("(min-width: 768px)").matches ? 3 : 1);
+      const slides = Array.from(root.querySelectorAll<HTMLElement>(".uc-slide"));
+      if (slides.length === 0) return;
+      const dotsWrap = root.querySelector<HTMLElement>(".uc-dots");
       let index = 0;
-      const maxIndex = () => Math.max(0, slides.length - visible());
 
-      const render = () => {
-        const pct = 100 / visible();
-        track.style.transform = `translateX(-${index * pct}%)`;
-      };
+      // construir puntos
+      const dots: HTMLButtonElement[] = [];
+      if (dotsWrap) {
+        slides.forEach((_, i) => {
+          const d = document.createElement("button");
+          d.className = "uc-dot" + (i === 0 ? " is-active" : "");
+          d.setAttribute("aria-label", `Ir al caso ${i + 1}`);
+          d.addEventListener("click", () => go(i));
+          dotsWrap.appendChild(d);
+          dots.push(d);
+        });
+      }
+
       const go = (i: number) => {
-        const max = maxIndex();
-        index = i > max ? 0 : i < 0 ? max : i;
-        render();
+        index = (i + slides.length) % slides.length;
+        slides.forEach((s, idx) => s.classList.toggle("is-active", idx === index));
+        dots.forEach((d, idx) => d.classList.toggle("is-active", idx === index));
       };
 
       root.querySelector(".uc-next")?.addEventListener("click", () => go(index + 1));
       root.querySelector(".uc-prev")?.addEventListener("click", () => go(index - 1));
 
-      let timer = window.setInterval(() => go(index + 1), 4500);
-      root.addEventListener("mouseenter", () => clearInterval(timer));
-      root.addEventListener("mouseleave", () => {
-        timer = window.setInterval(() => go(index + 1), 4500);
-      });
-      window.addEventListener("resize", () => { index = 0; render(); });
-      render();
+      let timer = window.setInterval(() => go(index + 1), 5000);
+      const pause = () => clearInterval(timer);
+      const resume = () => { timer = window.setInterval(() => go(index + 1), 5000); };
+      root.addEventListener("mouseenter", pause);
+      root.addEventListener("mouseleave", resume);
     });
   }
   initUseCase();

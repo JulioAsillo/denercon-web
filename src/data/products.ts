@@ -68,7 +68,7 @@ export const floorProducts: Product[] = [
       { icon: "straighten", text: "Formato: 122 x 18 cm" },
     ],
     waMessage: "Hola, quiero cotizar Pisos Vinílicos SPC.",
-    ctaLabel: "Cotizar SPC por WhatsApp",
+    ctaLabel: "Solicitar cotización",
     colors: swatchesFor("spc"),
   },
   {
@@ -84,7 +84,7 @@ export const floorProducts: Product[] = [
       { icon: "cleaning_services", text: "Fácil mantenimiento y limpieza" },
     ],
     waMessage: "Hola, quiero cotizar Pisos Laminados.",
-    ctaLabel: "Cotizar Laminados",
+    ctaLabel: "Solicitar cotización",
     colors: swatchesFor("laminado"),
   },
   {
@@ -100,7 +100,7 @@ export const floorProducts: Product[] = [
       { icon: "qr_code_2", text: "Códigos: 001, 002, 003, 006" },
     ],
     waMessage: "Hola, quiero consultar códigos y modelos de Wall Panels WPC.",
-    ctaLabel: "Consultar códigos disponibles",
+    ctaLabel: "Solicitar cotización",
     colors: swatchesFor("wpc"),
   },
 ];
@@ -121,7 +121,7 @@ export const fireProducts: Product[] = [
       { icon: "local_fire_department", text: "Resistencia al fuego de 1 a 3 horas" },
     ],
     waMessage: "Hola, quiero solicitar ficha y cotización de Puertas Cortafuego.",
-    ctaLabel: "Solicitar ficha y cotización",
+    ctaLabel: "Solicitar cotización",
   },
   {
     id: "barras",
@@ -136,7 +136,7 @@ export const fireProducts: Product[] = [
       { icon: "exit_to_app", text: "Evacuación segura garantizada" },
     ],
     waMessage: "Hola, quiero cotizar Barras Antipánico DT-F1200.",
-    ctaLabel: "Cotizar barras DT-F1200",
+    ctaLabel: "Solicitar cotización",
   },
   {
     id: "herrajes",
@@ -151,7 +151,7 @@ export const fireProducts: Product[] = [
       { icon: "border_bottom", text: "Sellos barredores y perimetrales" },
     ],
     waMessage: "Hola, quiero cotizar herrajes y accesorios certificados.",
-    ctaLabel: "Cotizar accesorios certificados",
+    ctaLabel: "Solicitar cotización",
   },
 ];
 

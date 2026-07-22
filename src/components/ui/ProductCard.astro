@@ -22,15 +22,15 @@ const hasCarousel = colors.length > 0;
     data-color-carousel
   >
     <!-- Media 3:4 -->
-    <div class="relative sm:w-2/5 sm:max-w-[240px] shrink-0 p-3">
+    <div class="relative w-full sm:w-[42%] lg:w-[44%] sm:max-w-[460px] shrink-0 p-3 md:p-4">
       <div class="relative aspect-[3/4] rounded-brand overflow-hidden bg-navy">
         {colors.map((c, i) => (
           <div class={`cc-slide absolute inset-0 transition-opacity duration-400 ${i === 0 ? "opacity-100" : "opacity-0"}`} data-label={c.label}>
             <Image
               src={c.src}
               alt={`${product.title} — ${c.label}`}
-              widths={[300, 450, 600]}
-              sizes="(max-width: 640px) 90vw, 240px"
+              widths={[440, 640, 900, 1280]}
+              sizes="(max-width: 640px) 90vw, (max-width: 1536px) 44vw, 460px"
               loading={i === 0 ? "eager" : "lazy"}
               class="w-full h-full object-cover"
             />
