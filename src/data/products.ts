@@ -9,31 +9,7 @@ import puertaNucleo from "@assets/images/fire/puerta-cf-nucleo-tecnico.png";
 import barra from "@assets/images/fire/barra-antipanico-macro.png";
 import herrajes from "@assets/images/fire/herrajes-flatlay.png";
 
-// ════════════════════════════════════════════════════════════════════
-//  GALERÍAS DE COLOR  ·  CÓMO AGREGAR IMÁGENES
-// ════════════════════════════════════════════════════════════════════
-//  1) Copia el archivo a  src/assets/images/floors/gallery/<producto>/
-//  2) Impórtalo arriba:
-//       import spcRobleNatural from "@assets/images/floors/gallery/spc/spc-roble-natural.png";
-//  3) Agrégalo al array `gallery` del producto:
-//       { image: spcRobleNatural, label: "Roble Natural", alt: "…" }
-//
-//  · Si `gallery` está vacío o ausente → la card muestra la foto única
-//    (`image`) y NO renderiza carrusel. El build nunca se rompe.
-//  · No hay límite de imágenes: agrega tantas líneas como colores existan.
-//  · `label` = nombre comercial del color (se muestra como etiqueta).
-// ════════════════════════════════════════════════════════════════════
-
 export type Feature = { icon: string; text: string };
-
-/** Una diapositiva del carrusel de colores dentro de una card. */
-export type GalleryItem = {
-  image: ImageMetadata;
-  /** Nombre comercial del color / acabado. Se muestra como etiqueta. */
-  label: string;
-  alt: string;
-};
-
 export type Product = {
   id: string;
   title: string;
@@ -44,9 +20,37 @@ export type Product = {
   features: Feature[];
   waMessage: string;
   ctaLabel: string;
-  /** Carrusel de colores. Opcional: si está vacío, se usa `image`. */
-  gallery?: GalleryItem[];
+  colors?: ColorSwatch[];
 };
+
+
+// ---------- Galería de colores (swatches 3:4) ----------
+// Se llenan SOLOS al colocar las imágenes en:
+//   src/assets/images/floors/gallery/spc|laminado|wpc/
+// Nombre: spc-<color>.png, laminado-<color>.png, wpc-<codigo>.png (1200x1600, 3:4)
+// La etiqueta visible se deriva del nombre del archivo.
+export type ColorSwatch = { src: ImageMetadata; label: string };
+
+const swatchModules = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/images/floors/gallery/**/*.{png,jpg,jpeg,webp}",
+  { eager: true }
+);
+
+function labelFromSwatch(path: string): string {
+  const file = path.split("/").pop()!.replace(/\.[^.]+$/, "");
+  const cleaned = file
+    .replace(/^(spc|laminado|wpc|wall-panel)-/, "")
+    .replace(/[-_]/g, " ")
+    .trim();
+  return cleaned.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function swatchesFor(folder: string): ColorSwatch[] {
+  return Object.entries(swatchModules)
+    .filter(([path]) => path.includes(`/gallery/${folder}/`))
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([path, mod]) => ({ src: mod.default, label: labelFromSwatch(path) }));
+}
 
 // ---------- Línea PISOS Y REVESTIMIENTOS ----------
 export const floorProducts: Product[] = [
@@ -63,10 +67,9 @@ export const floorProducts: Product[] = [
       { icon: "view_module", text: "Sistema click de instalación rápida" },
       { icon: "straighten", text: "Formato: 122 x 18 cm" },
     ],
-    waMessage: "Hola, quiero cotizar Pisos SPC.",
-    ctaLabel: "Solicitar cotización",
-    // TODO diseño: colores de catálogo SPC
-    gallery: [],
+    waMessage: "Hola, quiero cotizar Pisos Vinílicos SPC.",
+    ctaLabel: "Cotizar SPC por WhatsApp",
+    colors: swatchesFor("spc"),
   },
   {
     id: "laminado",
@@ -75,15 +78,14 @@ export const floorProducts: Product[] = [
     image: laminado,
     alt: "Pasillo corporativo con piso laminado tono madera cálido, alto tránsito.",
     features: [
-      { icon: "verified", text: "Durabilidad con certificación AC4 y AC5" },
       { icon: "groups", text: "Diseñados para alto tránsito" },
       { icon: "view_in_ar", text: "Núcleo HDF de alta densidad" },
       { icon: "shield", text: "Superficie resistente a rayaduras" },
+      { icon: "cleaning_services", text: "Fácil mantenimiento y limpieza" },
     ],
     waMessage: "Hola, quiero cotizar Pisos Laminados.",
-    ctaLabel: "Solicitar cotización",
-    // TODO diseño: colores de catálogo Laminado
-    gallery: [],
+    ctaLabel: "Cotizar Laminados",
+    colors: swatchesFor("laminado"),
   },
   {
     id: "wpc",
@@ -94,13 +96,12 @@ export const floorProducts: Product[] = [
     features: [
       { icon: "straighten", text: "Listones de 2400 x 160 x 24 mm" },
       { icon: "volume_off", text: "Propiedades acústicas integradas" },
-      { icon: "architecture", text: "Diseño moderno de alta gama" },
+      { icon: "architecture", text: "Diseño arquitectónico moderno" },
       { icon: "qr_code_2", text: "Códigos: 001, 002, 003, 006" },
     ],
     waMessage: "Hola, quiero consultar códigos y modelos de Wall Panels WPC.",
-    ctaLabel: "Solicitar cotización",
-    // TODO diseño: colores de catálogo Wall Panels
-    gallery: [],
+    ctaLabel: "Consultar códigos disponibles",
+    colors: swatchesFor("wpc"),
   },
 ];
 
@@ -120,40 +121,37 @@ export const fireProducts: Product[] = [
       { icon: "local_fire_department", text: "Resistencia al fuego de 1 a 3 horas" },
     ],
     waMessage: "Hola, quiero solicitar ficha y cotización de Puertas Cortafuego.",
-    ctaLabel: "Solicitar cotización",
-    gallery: [],
+    ctaLabel: "Solicitar ficha y cotización",
   },
   {
     id: "barras",
     title: "Barras Antipánico",
     subtitle: "Vías de evacuación",
     image: barra,
-    alt: "Barra antipánico en acero inoxidable pulido sobre puerta grafito.",
+    alt: "Barra antipánico DT-F1200 en acero inoxidable pulido sobre puerta grafito.",
     features: [
-      { icon: "policy", text: "Cumplimiento de normativas de seguridad" },
-      { icon: "shield", text: "Alta resistencia y durabilidad" },
-      { icon: "verified", text: "Certificación UL" },
+      { icon: "swap_horiz", text: "Modelos DT-F1200 horizontal" },
+      { icon: "swap_vert", text: "Modelos DT-F1200 vertical" },
+      { icon: "verified", text: "Certificación UL-CE" },
       { icon: "exit_to_app", text: "Evacuación segura garantizada" },
     ],
-    waMessage: "Hola, quiero cotizar Barras Antipánico.",
-    ctaLabel: "Solicitar cotización",
-    gallery: [],
+    waMessage: "Hola, quiero cotizar Barras Antipánico DT-F1200.",
+    ctaLabel: "Cotizar barras DT-F1200",
   },
   {
     id: "herrajes",
     title: "Herrajes y Accesorios",
     subtitle: "Complementos certificados",
     image: herrajes,
-    alt: "Flat-lay de herrajes premium: cerraduras, cierrapuertas y cinta intumescente.",
+    alt: "Flat-lay de herrajes premium: cerraduras ANSI, cierrapuertas F8500, cinta intumescente.",
     features: [
       { icon: "lock", text: "Manijas y cerraduras ANSI Grado 2" },
       { icon: "door_back", text: "Cierrapuertas UL" },
-      { icon: "local_fire_department", text: "Cinta intumescente" },
+      { icon: "local_fire_department", text: "Cinta intumescente italiana" },
       { icon: "border_bottom", text: "Sellos barredores y perimetrales" },
     ],
     waMessage: "Hola, quiero cotizar herrajes y accesorios certificados.",
-    ctaLabel: "Solicitar cotización",
-    gallery: [],
+    ctaLabel: "Cotizar accesorios certificados",
   },
 ];
 

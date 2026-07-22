@@ -1,40 +1,132 @@
 ---
-import Carousel from "@components/ui/Carousel.astro";
-import { useCases } from "@data/usecases";
+/**
+ * UseCaseCarousel.astro — Carrusel full-width de casos de uso (/pisos)
+ * -----------------------------------------------------------------------------
+ * Autoplay, 3 visibles en desktop / 1 en mobile. Cada imagen lleva etiqueta
+ * "Uso en …" derivada del nombre de archivo.
+ *
+ * COLOCAR IMÁGENES EN:  src/assets/images/floors/casos-uso/
+ *   Formato de nombre:  caso-<ambiente>-NN.(png|jpg)   2400x1350 (16:9)
+ *   ej: caso-terraza-01.png  ->  "Uso en terraza"
+ *       caso-sala-comedor-02.png -> "Uso en sala comedor"
+ *
+ * Si la carpeta está vacía, la sección NO se renderiza (no rompe el build).
+ */
+import { Image } from "astro:assets";
+import SectionHeading from "@components/ui/SectionHeading.astro";
 
-// Si aún no hay imágenes de casos de uso, la sección no se renderiza.
-const slides = useCases.map((u) => ({
-  image: u.image,
-  alt: u.alt,
-  label: u.label,
-  caption: u.caption,
-}));
+type CaseModule = { default: ImageMetadata };
+const modules = import.meta.glob<CaseModule>(
+  "/src/assets/images/floors/casos-uso/*.{png,jpg,jpeg,webp}",
+  { eager: true }
+);
+
+function labelFromPath(path: string): string {
+  const file = path.split("/").pop()!.replace(/\.[^.]+$/, ""); // caso-terraza-01
+  const amb = file
+    .replace(/^caso-/, "")
+    .replace(/[-_]?\d+$/, "")   // quita sufijo numérico
+    .replace(/[-_]/g, " ")
+    .trim();
+  return `Uso en ${amb}`;
+}
+
+const cases = Object.entries(modules)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([path, mod]) => ({ src: mod.default, label: labelFromPath(path) }));
 ---
 
-{
-  slides.length > 0 && (
-    <section class="w-full bg-navy py-12 md:py-16 overflow-hidden">
-      <div class="container-site mb-8">
-        <span class="text-sky/60 text-xs tracking-[0.2em] uppercase font-semibold">
-          Casos de uso
-        </span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white mt-2">
-          Nuestras superficies en proyectos reales
-        </h2>
+{cases.length > 0 && (
+  <section class="bg-surface py-14 md:py-20 overflow-hidden">
+    <div class="container-site mb-8">
+      <SectionHeading title="Casos de uso" accent="blue" />
+    </div>
+
+    <div class="uc-carousel relative" data-uc>
+      <div class="uc-track flex transition-transform duration-700 ease-out">
+        {cases.map((c) => (
+          <figure class="uc-slide relative shrink-0 px-2">
+            <div class="relative aspect-video overflow-hidden rounded-brand">
+              <Image
+                src={c.src}
+                alt={c.label}
+                widths={[600, 900, 1200]}
+                sizes="(max-width: 768px) 90vw, 33vw"
+                class="w-full h-full object-cover"
+              />
+              <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-navy/80 to-transparent"></div>
+              <figcaption class="absolute left-4 bottom-3 text-white font-bold text-sm md:text-base uppercase tracking-wide">
+                {c.label}
+              </figcaption>
+            </div>
+          </figure>
+        ))}
       </div>
 
-      <Carousel
-        slides={slides}
-        perView={3}
-        autoplay={true}
-        interval={5000}
-        ratio="aspect-video"
-        widths={[600, 1000, 1600, 2400]}
-        sizes="(max-width: 640px) 85vw, (max-width: 1024px) 60vw, 33vw"
-        accent="light"
-        labelSize="lg"
-        class="w-full px-4 md:px-16"
-      />
-    </section>
-  )
-}
+      {cases.length > 1 && (
+        <>
+          <button type="button" class="uc-arrow uc-prev" aria-label="Anterior">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button type="button" class="uc-arrow uc-next" aria-label="Siguiente">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </>
+      )}
+    </div>
+  </section>
+)}
+
+<style>
+  .uc-slide { width: 100%; }
+  @media (min-width: 768px) {
+    .uc-slide { width: 33.3333%; }
+  }
+  .uc-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
+    width: 44px; height: 44px; display: grid; place-items: center;
+    border: none; border-radius: 999px; cursor: pointer;
+    color: var(--color-navy); background: rgba(255,255,255,0.9);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15); transition: background .2s ease;
+  }
+  .uc-arrow:hover { background: #fff; }
+  .uc-prev { left: 12px; }
+  .uc-next { right: 12px; }
+</style>
+
+<script>
+  function initUseCase() {
+    document.querySelectorAll<HTMLElement>("[data-uc]").forEach((root) => {
+      const track = root.querySelector<HTMLElement>(".uc-track");
+      const slides = root.querySelectorAll(".uc-slide");
+      if (!track || slides.length === 0) return;
+
+      const visible = () => (window.matchMedia("(min-width: 768px)").matches ? 3 : 1);
+      let index = 0;
+      const maxIndex = () => Math.max(0, slides.length - visible());
+
+      const render = () => {
+        const pct = 100 / visible();
+        track.style.transform = `translateX(-${index * pct}%)`;
+      };
+      const go = (i: number) => {
+        const max = maxIndex();
+        index = i > max ? 0 : i < 0 ? max : i;
+        render();
+      };
+
+      root.querySelector(".uc-next")?.addEventListener("click", () => go(index + 1));
+      root.querySelector(".uc-prev")?.addEventListener("click", () => go(index - 1));
+
+      let timer = window.setInterval(() => go(index + 1), 4500);
+      root.addEventListener("mouseenter", () => clearInterval(timer));
+      root.addEventListener("mouseleave", () => {
+        timer = window.setInterval(() => go(index + 1), 4500);
+      });
+      window.addEventListener("resize", () => { index = 0; render(); });
+      render();
+    });
+  }
+  initUseCase();
+  document.addEventListener("astro:page-load", initUseCase);
+</script>
