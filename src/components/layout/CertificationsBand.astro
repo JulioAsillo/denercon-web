@@ -1,0 +1,47 @@
+---
+import { certificationList } from "@data/certifications";
+
+// Si el logo no está cargado todavía, cae a una pastilla con el nombre.
+---
+
+<section
+  class="w-full bg-navy-90 border-t border-white/10 py-10 md:py-12"
+  aria-labelledby="certs-title"
+>
+  <div class="container-site">
+    <h2
+      id="certs-title"
+      class="text-center text-sky/70 text-xs md:text-sm font-bold tracking-[0.2em] uppercase mb-8"
+    >
+      Certificaciones y estándares
+    </h2>
+
+    <ul class="flex flex-wrap justify-center items-center gap-x-6 gap-y-5 md:gap-x-10">
+      {
+        certificationList.map((c) => (
+          <li>
+            {c.logo ? (
+              <img
+                src={c.logo}
+                alt={c.alt ?? c.name}
+                loading="lazy"
+                decoding="async"
+                class="h-9 md:h-11 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity duration-300"
+              />
+            ) : (
+              <span class="inline-flex items-center gap-1.5 text-xs md:text-sm text-sky/80 border border-white/20 rounded-brand px-3 py-2 whitespace-nowrap">
+                <span
+                  class="material-symbols-outlined text-[16px] text-sky/60"
+                  aria-hidden="true"
+                >
+                  verified
+                </span>
+                {c.name}
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

@@ -3,50 +3,73 @@ import { Image } from "astro:assets";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import { waLink } from "@data/site";
 import heroShowroom from "@assets/images/corporate/nosotros-hero-showroom.png";
-import areaReunion from "@assets/images/corporate/nosotros-area-reunion.png";
+
+// FONDO FULL-WIDTH del bloque "¿Quiénes son D'ENERCON?".
+// Sobrescribe este archivo con el master 3840 x 1600 (12:5).
+import fondoCorporativo from "@assets/images/corporate/nosotros-area-reunion.png";
 ---
 <BaseLayout title="Nosotros — D'ENERCON" active="nosotros">
-  <!-- Hero -->
-  <section class="relative w-full h-[520px] flex items-center justify-center overflow-hidden -mt-20 pt-20">
-    <Image src={heroShowroom} alt="Centro logístico y showroom corporativo de D'ENERCON." widths={[1280, 1920, 2560, 3840]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover" />
+
+  <!-- ══ Hero ══ -->
+  <section class="relative w-full h-[560px] md:h-[620px] flex items-center justify-center overflow-hidden -mt-20 pt-20">
+    <Image
+      src={heroShowroom}
+      alt="Operaciones y centro logístico de D'ENERCON."
+      widths={[1280, 1920, 2560, 3840]}
+      sizes="100vw"
+      loading="eager"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
     <div class="absolute inset-0 bg-navy/75"></div>
     <div class="relative z-10 text-center container-site">
-      <h1 class="text-4xl md:text-5xl font-black text-white mb-4">D'ENERCON</h1>
-      <p class="text-lg text-sky/90 max-w-2xl mx-auto">Excelencia y precisión en soluciones industriales y arquitectónicas.</p>
+      <h1 class="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6 max-w-4xl mx-auto leading-[1.1]">
+        Donde la innovación, la seguridad y el diseño se encuentran
+      </h1>
+      <p class="text-lg md:text-xl text-sky/90 max-w-2xl mx-auto">
+        Productos de alto desempeño, respaldo técnico y cumplimiento de estándares
+        internacionales para proyectos exigentes.
+      </p>
     </div>
   </section>
 
-  <!-- Cuerpo -->
-  <section class="py-16 md:py-20 container-site">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-      <div class="space-y-8">
-        <div>
-          <h2 class="text-3xl font-bold text-navy mb-2">¿Quiénes son D'ENERCON?</h2>
-          <div class="w-16 h-1 bg-blue rounded-full"></div>
-        </div>
-        <div class="space-y-4 text-lg text-navy/80">
+  <!-- ══ Cuerpo: imagen de fondo a todo el ancho, texto encima ══ -->
+  <section class="relative w-full overflow-hidden">
+    <Image
+      src={fondoCorporativo}
+      alt="Área corporativa premium de D'ENERCON."
+      widths={[1280, 1920, 2560, 3840]}
+      sizes="100vw"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-navy/85"></div>
+
+    <div class="relative z-10 container-site py-24 md:py-32">
+      <div class="max-w-3xl">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-3">¿Por qué elegir D'ENERCON?</h2>
+        <div class="w-16 h-1 bg-sky rounded-full mb-8"></div>
+
+        <div class="space-y-5 text-lg text-white/85">
           <p>
-            D'ENERCON es una marca integradora de soluciones para el sector construcción. Su propuesta de valor
-            fusiona la <strong class="text-navy">estética y funcionalidad</strong> de los acabados arquitectónicos
-            con la máxima rigurosidad técnica de los sistemas de protección contra incendios.
+            Somos una empresa orientada a brindar soluciones integrales para la construcción
+            moderna, combinando <strong class="text-white">diseño, funcionalidad y seguridad</strong>
+            en cada producto que comercializamos.
           </p>
           <p>
-            Operamos siempre bajo estrictos estándares de <strong class="text-navy">calidad internacional y
-            transparencia corporativa</strong>, garantizando que cada producto cumpla con las normativas más
-            exigentes para arquitectos, desarrolladores y especialistas en seguridad industrial.
+            Trabajamos con fabricantes y proveedores que cumplen
+            <strong class="text-white">estándares internacionales</strong>, garantizando calidad,
+            respaldo técnico y cumplimiento normativo para proyectos de cualquier escala.
           </p>
         </div>
-        <div class="pt-8 border-t border-navy/10">
-          <p class="text-navy/70 mb-4">¿Busca asesoría especializada para su proyecto?</p>
-          <a href={waLink("Hola, deseo conversar con un asesor corporativo de D'ENERCON.")} target="_blank" rel="noopener noreferrer"
+
+        <div class="pt-10 mt-10 border-t border-white/15">
+          <p class="text-sky/80 mb-4">¿Tienes un proyecto en desarrollo?</p>
+          <a href={waLink("Hola, deseo solicitar asesoría técnica a D'ENERCON.")}
+             target="_blank" rel="noopener noreferrer"
              class="inline-flex items-center gap-2 bg-whatsapp text-white font-bold px-8 py-4 rounded-full shadow-lg hover:scale-105 transition-transform">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chat</span>
-            Conversa con un asesor corporativo
+            Solicitar asesoría técnica
           </a>
         </div>
-      </div>
-      <div class="relative w-full h-[500px] rounded-brand overflow-hidden border border-navy/10">
-        <Image src={areaReunion} alt="Área de reunión corporativa premium de D'ENERCON." widths={[600, 1000, 1600]} sizes="(max-width: 768px) 100vw, 50vw" class="w-full h-full object-cover" />
       </div>
     </div>
   </section>

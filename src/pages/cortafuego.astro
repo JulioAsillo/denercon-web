@@ -1,27 +1,49 @@
 ---
 import { Image } from "astro:assets";
 import BaseLayout from "@layouts/BaseLayout.astro";
+import SectionHeading from "@components/ui/SectionHeading.astro";
 import ProductCard from "@components/ui/ProductCard.astro";
 import { fireProducts } from "@data/products";
+
+// HERO — sobrescribe este archivo con el master 3840 x 2160 (16:9).
+// Pedido del cliente: fuego + puerta cortafuego en la toma.
 import bannerFondo from "@assets/images/fire/puerta-cf-almacen-fondo.png";
 ---
 <BaseLayout title="Seguridad Pasiva y Cortafuego — D'ENERCON" active="cortafuego">
-  <!-- Banner header -->
-  <header class="relative w-full py-20 overflow-hidden -mt-20 pt-40 bg-navy text-white">
-    <Image src={bannerFondo} alt="Puertas cortafuego de acero en entorno industrial." widths={[1280, 1920, 2560, 3840]} sizes="100vw" class="absolute inset-0 w-full h-full object-cover opacity-30" />
-    <div class="absolute inset-0 bg-navy/60"></div>
-    <div class="relative z-10 container-site">
-      <h1 class="text-4xl md:text-5xl font-black text-white mb-4">Seguridad pasiva y cortafuego</h1>
-      <p class="text-lg max-w-2xl text-sky/90">
-        Equipamiento certificado para vías de evacuación (UL, FM, NFPA). Diseñado para entornos industriales
-        y arquitectónicos exigentes.
+
+  <!-- ══ HERO más alto, imagen con más presencia ══ -->
+  <header class="relative w-full min-h-[520px] md:min-h-[640px] flex items-end overflow-hidden -mt-20 bg-navy">
+    <Image
+      src={bannerFondo}
+      alt="Puerta cortafuego de acero resistiendo un frente de fuego."
+      widths={[768, 1280, 1920, 2560, 3840]}
+      sizes="100vw"
+      loading="eager"
+      class="absolute inset-0 w-full h-full object-cover opacity-70"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/75 to-navy/25"></div>
+
+    <div class="relative z-10 container-site pb-16 md:pb-24 pt-32">
+      <h1 class="text-4xl md:text-6xl font-black text-white mb-4 leading-[1.05]">
+        Seguridad Pasiva y Cortafuego
+      </h1>
+      <p class="text-xl md:text-2xl font-bold text-sky max-w-3xl mb-4 leading-snug">
+        Soluciones certificadas para una evacuación segura y el cumplimiento normativo
+      </p>
+      <p class="text-base md:text-lg max-w-2xl text-sky/80">
+        Puertas cortafuego, barras antipánico y accesorios especializados para proyectos
+        comerciales, industriales y de infraestructura.
       </p>
     </div>
   </header>
 
-  <main class="py-16 md:py-20 container-site">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {fireProducts.map((p) => <ProductCard product={p} accent="fire" />)}
+  <!-- ══ Catálogo — fondo celeste de marca, no blanco ══ -->
+  <main class="bg-sky-30 py-16 md:py-20">
+    <div class="container-site">
+      <SectionHeading title="Catálogo de productos" accent="fire" />
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+        {fireProducts.map((p) => <ProductCard product={p} accent="fire" />)}
+      </div>
     </div>
   </main>
 </BaseLayout>

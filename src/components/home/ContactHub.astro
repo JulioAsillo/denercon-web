@@ -2,15 +2,15 @@
 import { site, waLink } from "@data/site";
 import GoogleMap from "@components/shared/GoogleMap.astro";
 const info = [
-  { icon: "location_on", label: "Sede principal", value: site.address },
-  { icon: "call", label: "Atención comercial", value: site.phoneDisplay },
+  { icon: "location_on", label: "Oficina comercial", value: site.address },
+  { icon: "call", label: "Ventas corporativas", value: site.phoneDisplay },
 ];
 ---
 <section id="contacto" class="bg-navy text-white py-16 md:py-20 border-t border-white/10">
   <div class="container-site flex flex-col md:flex-row gap-12 items-center">
     <div class="w-full md:w-3/5 space-y-6">
-      <h2 class="text-3xl md:text-4xl font-black">¿Listo para asegurar o embellecer tu obra?</h2>
-      <p class="text-lg text-sky/90">Nuestro equipo de asesores corporativos está listo para brindarte soporte técnico, cotizaciones rápidas y catálogos detallados.</p>
+      <h2 class="text-3xl md:text-4xl font-black">Tu aliado estratégico en construcción y seguridad</h2>
+      <p class="text-lg text-sky/90">Especialistas en acabados arquitectónicos y sistemas cortafuego certificados para proyectos residenciales, comerciales e industriales.</p>
       <div class="space-y-4 py-2">
         {info.map((i) => (
           <div class="flex items-start gap-4">
@@ -24,15 +24,15 @@ const info = [
         <div class="flex items-start gap-4">
           <span class="material-symbols-outlined text-blue mt-1">mail</span>
           <div>
-            <p class="font-bold text-sky text-sm">Correos electrónicos</p>
+            <p class="font-bold text-sky text-sm">Correo comercial</p>
             {site.emails.map((e) => <p class="text-white">{e}</p>)}
           </div>
         </div>
       </div>
-      <a href={waLink("Hola, deseo iniciar una asesoría corporativa con D'ENERCON.")} target="_blank" rel="noopener noreferrer"
+      <a href={waLink("Hola, deseo hablar con un especialista de D'ENERCON.")} target="_blank" rel="noopener noreferrer"
          class="inline-flex items-center gap-3 px-8 py-4 bg-whatsapp text-white font-bold rounded-brand shadow-lg hover:-translate-y-1 transition-transform">
         <span class="material-symbols-outlined text-xl">forum</span>
-        <span class="tracking-wider">INICIAR ASESORÍA CORPORATIVA POR WHATSAPP</span>
+        <span class="tracking-wider uppercase">Hablar con un especialista</span>
       </a>
     </div>
     <div class="w-full md:w-2/5 h-64 md:h-96">

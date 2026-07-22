@@ -1,44 +1,80 @@
 ---
 import { site } from "@data/site";
-import { certifications } from "@data/certifications";
+import CertificationsBand from "@components/layout/CertificationsBand.astro";
+
 const year = new Date().getFullYear();
+
+// ⚠️ PENDIENTE: "Soluciones" y "Proyectos" no existen como páginas todavía.
+//    Cuando se decida (ver nota), descomentar y apuntar al destino real.
 const links = [
   { href: "/", label: "Inicio" },
   { href: "/nosotros", label: "Nosotros" },
+  // { href: "/soluciones", label: "Soluciones" },   ← página inexistente
+  // { href: "/proyectos",  label: "Proyectos"  },   ← página inexistente
   { href: "/pisos", label: "Pisos y Revestimientos" },
   { href: "/cortafuego", label: "Seguridad Cortafuego" },
+  { href: "/#contacto", label: "Contacto" },
 ];
 ---
-<footer class="bg-navy w-full py-16 border-t border-white/10 text-white">
-  <div class="container-site grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Franja de certificaciones, justo encima del footer -->
+<CertificationsBand />
+
+<footer class="bg-navy w-full pt-16 border-t border-white/10 text-white">
+  <div class="container-site grid grid-cols-1 md:grid-cols-3 gap-10 pb-12">
+
+    <!-- Columna 1 -->
     <div class="space-y-4">
-      <!-- Logo con fondo navy (versión clara sobre oscuro) -->
       <img src="/brand/denercon-logo-fondo.png" alt="D'ENERCON" class="h-12 w-auto" width="1754" height="1241" />
-      <p class="text-sm text-sky/80 max-w-xs">
-        Soluciones integrales en revestimientos y seguridad industrial para proyectos corporativos.
+      <p class="text-sm text-sky/80 max-w-xs leading-relaxed">
+        Especialistas en acabados arquitectónicos y sistemas de protección contra incendios
+        para proyectos residenciales, comerciales e industriales.
       </p>
-      <p class="text-xs text-sky/50">© {year} {site.brand}. Todos los derechos reservados.</p>
     </div>
 
+    <!-- Columna 2 -->
     <div class="flex flex-col gap-2">
-      <h3 class="font-bold text-white mb-2 uppercase tracking-wider text-sm">Navegación</h3>
+      <h3 class="font-bold text-white mb-2 uppercase tracking-wider text-sm">Enlaces rápidos</h3>
       {links.map((l) => (
         <a href={l.href} class="text-sky/80 hover:text-white transition-colors text-sm">{l.label}</a>
       ))}
     </div>
 
-    <div class="flex flex-col gap-2">
-      <h3 class="font-bold text-white mb-2 uppercase tracking-wider text-sm">Contacto</h3>
-      <span class="text-sky/80 text-sm">{site.address}</span>
-      <span class="text-sky/80 text-sm">{site.phoneDisplay}</span>
-      {site.emails.map((e) => (
-        <a href={`mailto:${e}`} class="text-sky/80 hover:text-white transition-colors text-sm">{e}</a>
-      ))}
-      <div class="flex flex-wrap gap-3 items-center mt-4 opacity-70">
-        {certifications.slice(0, 4).map((c) => (
-          <span class="text-xs border border-white/30 rounded px-2 py-1">{c}</span>
-        ))}
+    <!-- Columna 3 -->
+    <div class="flex flex-col gap-4">
+      <h3 class="font-bold text-white uppercase tracking-wider text-sm">Oficina comercial</h3>
+
+      <div class="flex items-start gap-3">
+        <span class="material-symbols-outlined text-blue text-[20px] mt-0.5" aria-hidden="true">location_on</span>
+        <span class="text-sky/80 text-sm">{site.address}</span>
       </div>
+
+      <div class="flex items-start gap-3">
+        <span class="material-symbols-outlined text-blue text-[20px] mt-0.5" aria-hidden="true">call</span>
+        <div>
+          <p class="text-sky text-xs font-bold uppercase tracking-wide">Ventas corporativas</p>
+          <a href={`tel:+${site.phoneIntl}`} class="text-sky/80 hover:text-white transition-colors text-sm">
+            {site.phoneDisplay}
+          </a>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-3">
+        <span class="material-symbols-outlined text-blue text-[20px] mt-0.5" aria-hidden="true">mail</span>
+        <div class="flex flex-col">
+          {site.emails.map((e) => (
+            <a href={`mailto:${e}`} class="text-sky/80 hover:text-white transition-colors text-sm">{e}</a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barra inferior -->
+  <div class="border-t border-white/10">
+    <div class="container-site py-6">
+      <p class="text-xs text-sky/50 text-center">
+        © {year} {site.brand} S.A.C. Todos los derechos reservados.
+      </p>
     </div>
   </div>
 </footer>

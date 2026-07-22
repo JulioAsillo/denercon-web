@@ -1,42 +1,374 @@
 ---
-import { Image } from "astro:assets";
-import type { Product } from "@data/products";
-import WhatsAppButton from "@components/ui/WhatsAppButton.astro";
+/**
+ * ProductCard.astro — Layout C (horizontal)
+ * -----------------------------------------------------------------------------
+ * Media 3:4 vertical a la izquierda (carrusel de color) + contenido a la derecha.
+ * En mobile se apila: media arriba, contenido abajo.
+ *
+ * CONTRATO DE PROPS (verifica que tu pisos.astro pase estos nombres):
+ *   title       string                      -> nombre del producto (obligatorio)
+ *   colors      { src: ImageMetadata; label: string }[]  -> slides del carrusel (obligatorio)
+ *   description string   (opcional)         -> bajada
+ *   features    string[] (opcional)         -> bullets con check
+ *   badge       string   (opcional)         -> pill superior (ej: "SPC", "Laminado", "WPC")
+ *   ctaLabel    string   (opcional)         -> texto del botón
+ *   ctaHref     string   (opcional)         -> link del botón (ej: waLink(...))
+ *
+ * Las imágenes se importan en la página con import.meta.glob y se pasan como
+ * ImageMetadata para que astro:assets genere WebP/AVIF responsive.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface ColorItem {
+  src: ImageMetadata;
+  label: string;
+}
 
 interface Props {
-  product: Product;
-  accent?: "blue" | "fire";
+  title: string;
+  colors: ColorItem[];
+  description?: string;
+  features?: string[];
+  badge?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
 }
-const { product, accent = "blue" } = Astro.props;
-const iconColor = accent === "fire" ? "text-fire" : "text-blue";
-const cardBg = accent === "fire" ? "bg-fire-soft border-fire/20" : "bg-white border-navy/10";
+
+const {
+  title,
+  colors,
+  description,
+  features = [],
+  badge,
+  ctaLabel = 'Cotizar por WhatsApp',
+  ctaHref = '#',
+} = Astro.props;
 ---
-<article class={`rounded-brand border ${cardBg} overflow-hidden flex flex-col shadow-sm hover:shadow-md transition-shadow group`}>
-  <div class="relative h-56 overflow-hidden">
-    <Image
-      src={product.image}
-      alt={product.alt}
-      widths={[400, 800, 1200]}
-      sizes="(max-width: 768px) 100vw, 33vw"
-      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-    />
-    {product.badge && (
-      <span class={`absolute top-2 right-2 ${accent === 'fire' ? 'bg-fire' : 'bg-navy'} text-white text-xs font-bold px-2 py-1 rounded shadow`}>
-        {product.badge}
-      </span>
-    )}
+
+<article class="product-card" data-carousel>
+  <!-- ============ MEDIA (carrusel de color 3:4) ============ -->
+  <div class="pc-media">
+    <div class="pc-viewport">
+      <div class="pc-track">
+        {colors.map((color, i) => (
+          <div
+            class="pc-slide"
+            data-label={color.label}
+            aria-hidden={i === 0 ? 'false' : 'true'}
+          >
+            <Image
+              src={color.src}
+              alt={`${title} — ${color.label}`}
+              class="pc-img"
+              widths={[400, 600, 800]}
+              sizes="(max-width: 640px) 90vw, 420px"
+              loading={i === 0 ? 'eager' : 'lazy'}
+            />
+          </div>
+        ))}
+      </div>
+
+      <!-- etiqueta de color sobre la imagen -->
+      <span class="pc-color-label">{colors[0]?.label}</span>
+
+      {colors.length > 1 && (
+        <>
+          <button class="pc-arrow pc-arrow--prev" type="button" aria-label="Color anterior">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="pc-arrow pc-arrow--next" type="button" aria-label="Color siguiente">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </>
+      )}
+    </div>
   </div>
-  <div class="p-6 flex-1 flex flex-col">
-    <h3 class="text-xl font-bold text-navy mb-1">{product.title}</h3>
-    {product.subtitle && <p class="text-sm text-blue font-medium mb-4">{product.subtitle}</p>}
-    <ul class="space-y-2 mb-8 flex-1 text-sm text-navy/70">
-      {product.features.map((f) => (
-        <li class="flex items-start gap-2">
-          <span class={`material-symbols-outlined text-[18px] ${iconColor}`}>{f.icon}</span>
-          <span>{f.text}</span>
-        </li>
-      ))}
-    </ul>
-    <WhatsAppButton message={product.waMessage} label={product.ctaLabel} full class="mt-auto" />
+
+  <!-- ============ CONTENIDO ============ -->
+  <div class="pc-body">
+    {badge && <span class="pc-badge">{badge}</span>}
+    <h3 class="pc-title">{title}</h3>
+    {description && <p class="pc-desc">{description}</p>}
+
+    {features.length > 0 && (
+      <ul class="pc-features">
+        {features.map((f) => (
+          <li>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12l4 4L19 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>{f}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    {colors.length > 1 && (
+      <div class="pc-dots" role="tablist" aria-label="Colores disponibles">
+        {colors.map((color, i) => (
+          <button
+            class:list={['pc-dot', { 'is-active': i === 0 }]}
+            type="button"
+            role="tab"
+            aria-label={color.label}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            data-index={i}
+          ></button>
+        ))}
+      </div>
+    )}
+
+    <a class="pc-cta" href={ctaHref} target="_blank" rel="noopener noreferrer">
+      {ctaLabel}
+    </a>
   </div>
 </article>
+
+<style>
+  .product-card {
+    display: flex;
+    flex-direction: row;
+    gap: clamp(1rem, 2vw, 1.75rem);
+    background: var(--color-surface, #F4F4F4);
+    border: 1px solid color-mix(in srgb, var(--color-sky, #C1DAE5) 60%, transparent);
+    border-radius: 18px;
+    overflow: hidden;
+    padding: clamp(0.75rem, 1.5vw, 1.25rem);
+  }
+
+  /* ---------- MEDIA ---------- */
+  .pc-media {
+    flex: 0 0 42%;
+    max-width: 420px;
+    min-width: 0;
+  }
+
+  .pc-viewport {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;           /* calza con las imágenes 1200x1600 */
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--color-navy, #0B1F2E);
+  }
+
+  .pc-track {
+    position: absolute;
+    inset: 0;
+  }
+
+  .pc-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .pc-slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .pc-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;             /* imagen y marco coinciden: no recorta feo */
+    object-position: center;
+    display: block;
+  }
+
+  .pc-color-label {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    z-index: 2;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: color-mix(in srgb, var(--color-navy, #0B1F2E) 82%, transparent);
+    backdrop-filter: blur(4px);
+    border-radius: 999px;
+  }
+
+  .pc-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 999px;
+    color: var(--color-navy, #0B1F2E);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .pc-arrow:hover { background: #fff; }
+  .pc-arrow--prev { left: 8px; }
+  .pc-arrow--next { right: 8px; }
+
+  /* ---------- CONTENIDO ---------- */
+  .pc-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0.5rem 0.5rem 0;
+  }
+
+  .pc-badge {
+    align-self: flex-start;
+    padding: 0.25rem 0.65rem;
+    margin-bottom: 0.65rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-blue, #3153A0);
+    background: color-mix(in srgb, var(--color-sky, #C1DAE5) 55%, transparent);
+    border-radius: 999px;
+  }
+
+  .pc-title {
+    margin: 0 0 0.4rem;
+    font-size: clamp(1.15rem, 2vw, 1.5rem);
+    font-weight: 700;
+    color: var(--color-navy, #0B1F2E);
+    line-height: 1.15;
+  }
+
+  .pc-desc {
+    margin: 0 0 0.9rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--color-navy, #0B1F2E) 75%, transparent);
+  }
+
+  .pc-features {
+    list-style: none;
+    margin: 0 0 1.1rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .pc-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: color-mix(in srgb, var(--color-navy, #0B1F2E) 80%, transparent);
+  }
+  .pc-features svg {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    color: var(--color-blue, #3153A0);
+  }
+
+  .pc-dots {
+    display: flex;
+    gap: 0.4rem;
+    margin: auto 0 1rem;           /* empuja el CTA al fondo */
+    padding-top: 0.5rem;
+  }
+  .pc-dot {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-navy, #0B1F2E) 25%, transparent);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .pc-dot.is-active {
+    background: var(--color-blue, #3153A0);
+    transform: scale(1.25);
+  }
+
+  .pc-cta {
+    align-self: flex-start;
+    padding: 0.65rem 1.3rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff;
+    background: var(--color-blue, #3153A0);
+    border-radius: 10px;
+    transition: background 0.2s ease;
+  }
+  .pc-cta:hover {
+    background: var(--color-navy, #0B1F2E);
+  }
+
+  /* ---------- MOBILE: apilar ---------- */
+  @media (max-width: 640px) {
+    .product-card {
+      flex-direction: column;
+    }
+    .pc-media {
+      flex: 1 1 auto;
+      max-width: 100%;
+    }
+    .pc-viewport {
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .pc-body {
+      padding: 0.25rem;
+    }
+    .pc-dots {
+      margin-bottom: 1rem;
+    }
+  }
+</style>
+
+<script>
+  // Inicializa cada tarjeta de forma independiente (una sola carga global).
+  function initProductCards() {
+    document.querySelectorAll<HTMLElement>('.product-card[data-carousel]').forEach((card) => {
+      const slides = Array.from(card.querySelectorAll<HTMLElement>('.pc-slide'));
+      const dots = Array.from(card.querySelectorAll<HTMLButtonElement>('.pc-dot'));
+      const label = card.querySelector<HTMLElement>('.pc-color-label');
+      const prev = card.querySelector<HTMLButtonElement>('.pc-arrow--prev');
+      const next = card.querySelector<HTMLButtonElement>('.pc-arrow--next');
+      if (slides.length === 0) return;
+
+      let current = 0;
+
+      const go = (index: number) => {
+        current = (index + slides.length) % slides.length;
+        slides.forEach((s, i) => {
+          s.classList.toggle('is-active', i === current);
+          s.setAttribute('aria-hidden', i === current ? 'false' : 'true');
+        });
+        dots.forEach((d, i) => {
+          d.classList.toggle('is-active', i === current);
+          d.setAttribute('aria-selected', i === current ? 'true' : 'false');
+        });
+        if (label) label.textContent = slides[current].dataset.label ?? '';
+      };
+
+      // primer slide visible
+      slides[0].classList.add('is-active');
+
+      prev?.addEventListener('click', () => go(current - 1));
+      next?.addEventListener('click', () => go(current + 1));
+      dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+          const idx = Number(dot.dataset.index ?? '0');
+          go(idx);
+        });
+      });
+    });
+  }
+
+  initProductCards();
+  // por si navegas con View Transitions / Astro islands
+  document.addEventListener('astro:page-load', initProductCards);
+</script>

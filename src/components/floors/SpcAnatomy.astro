@@ -1,58 +1,211 @@
 ---
+import fs from "node:fs";
+
+// ════════════════════════════════════════════════════════════════════
+//  ANIMACIÓN (After Effects → Lottie)
+// ════════════════════════════════════════════════════════════════════
+//  Cuando el animador entregue el JSON, colócalo EXACTAMENTE en:
+//      public/anim/spc-anatomy.json
+//  No hace falta tocar código: si el archivo existe, esta sección
+//  reemplaza automáticamente la pila CSS por la animación Lottie.
+//  Si no existe, se muestra la pila isométrica CSS de siempre.
+//
+//  Para que el CLICK EN CAPAS funcione, el animador debe:
+//   · Nombrar cada capa en AE como:  #capa-1  ...  #capa-5
+//     (Bodymovin convierte "#nombre" en el atributo id del SVG)
+//   · Crear un MARCADOR de composición por capa: capa-1 … capa-5
+// ════════════════════════════════════════════════════════════════════
+const LOTTIE_PUBLIC_PATH = "/anim/spc-anatomy.json";
+const hasLottie = fs.existsSync(
+  new URL("../../../public/anim/spc-anatomy.json", import.meta.url),
+);
+
 const layers = [
-  { n: 1, title: "Filtro UV superior", desc: "Protege el diseño contra la decoloración por luz solar, garantizando colores vivos por años." },
-  { n: 2, title: "Capa de desgaste transparente", desc: "Escudo de alta resistencia a la abrasión, arañazos y alto tránsito comercial." },
-  { n: 3, title: "Película decorativa HD", desc: "Texturas mate en alta definición que replican la madera natural de forma hiperrealista." },
-  { n: 4, title: "Núcleo rígido SPC", desc: "Compuesto de 40% polvo de piedra y polímeros. 100% impermeable e ignífugo." },
-  { n: 5, title: "Aislante acústico integrado", desc: "Base que absorbe el sonido de impacto y facilita la instalación sobre contrapiso." },
+  {
+    n: 1,
+    title: "Filtro UV superior",
+    desc: "Protege el diseño contra la decoloración por luz solar, garantizando colores vivos por años.",
+  },
+  {
+    n: 2,
+    title: "Capa de desgaste transparente",
+    desc: "Escudo de alta resistencia a la abrasión y a la rayadura, incluso en alto tránsito comercial.",
+  },
+  {
+    n: 3,
+    title: "Película decorativa HD",
+    desc: "Texturas mate en alta definición que replican la madera natural de forma hiperrealista.",
+  },
+  {
+    n: 4,
+    title: "Núcleo rígido SPC",
+    desc: "Compuesto de 40% polvo de piedra y polímeros. 100% impermeable e ígneo: el piso SPC no se quema.",
+  },
+  {
+    n: 5,
+    title: "Aislante acústico integrado",
+    desc: "Base que absorbe el sonido de impacto y facilita la instalación sobre contrapiso.",
+  },
 ];
 ---
-<section class="container-site py-16 md:py-20">
+
+<section class="container-site py-20 md:py-28">
   <div class="bg-white rounded-brand shadow-sm overflow-hidden border border-navy/10">
     <div class="grid grid-cols-1 lg:grid-cols-2 group spc-perspective">
-
       <!-- Izquierda: textos interactivos -->
       <div class="p-10 lg:p-16 flex flex-col justify-center relative z-10">
-        <span class="text-blue text-sm font-bold tracking-widest uppercase mb-2">Tecnología SLS Saintlosi</span>
-        <h2 class="text-3xl md:text-4xl font-black text-navy mb-8 leading-tight">
-          El núcleo de la<br>resistencia absoluta
+        <span class="text-blue text-sm font-bold tracking-widest uppercase mb-3">
+          Ingeniería de superficie
+        </span>
+        <h2 class="text-4xl md:text-5xl font-black text-navy mb-4 leading-[1.05]">
+          Anatomía de un<br />piso ígneo
         </h2>
-        <div class="space-y-3 relative">
-          {layers.map((l) => (
-              <div class={`spc-trigger-${l.n} p-4 rounded-xl hover:bg-surface transition-colors cursor-default border-l-4 border-transparent hover:border-blue`}>
-                <h4 class="font-bold text-lg text-navy">{l.n}. {l.title}</h4>
+        <p class="text-navy/60 mb-10 max-w-md">
+          No se quema. No se raya. Cinco capas trabajando juntas para resistir lo que
+          el proyecto le exija.
+        </p>
+
+        <div class="space-y-3 relative" data-spc-triggers>
+          {
+            layers.map((l) => (
+              <div
+                class={`spc-trigger-${l.n} p-4 rounded-xl hover:bg-surface transition-colors cursor-pointer border-l-4 border-transparent hover:border-blue`}
+                data-spc-trigger={`capa-${l.n}`}
+                role="button"
+                tabindex="0"
+              >
+                <h4 class="font-bold text-lg text-navy">
+                  {l.n}. {l.title}
+                </h4>
                 <p class="text-sm text-navy/60 mt-1">{l.desc}</p>
               </div>
-          ))}
+            ))
+          }
         </div>
       </div>
 
-      <!-- Derecha: pila isométrica 3D -->
-      <div class="bg-navy min-h-[420px] lg:min-h-full flex items-center justify-center relative overflow-hidden spc-visual group-hover:bg-navy-90 transition-colors duration-500">
-        <div class="absolute bottom-6 right-6 text-white/40 text-xs tracking-widest uppercase flex items-center gap-2">
+      <!-- Derecha: animación (Lottie si existe) o pila isométrica CSS -->
+      <div
+        class="bg-navy min-h-[520px] lg:min-h-[720px] flex items-center justify-center relative overflow-hidden spc-visual group-hover:bg-navy-90 transition-colors duration-500"
+      >
+        <div
+          class="absolute bottom-6 right-6 text-white/40 text-xs tracking-widest uppercase flex items-center gap-2 z-10"
+        >
           <span class="material-symbols-outlined text-base animate-bounce">touch_app</span>
-          Pasa el cursor
+          {hasLottie ? "Haz clic en una capa" : "Pasa el cursor"}
         </div>
 
-        <div class="relative w-64 h-64 spc-stack">
-          <div class="spc-layer spc-layer-1 absolute inset-0 bg-sky/40 border border-sky rounded-sm backdrop-blur-sm flex items-center justify-center">
-            <span class="text-navy/60 font-bold text-xs -rotate-45">1. UV</span>
-          </div>
-          <div class="spc-layer spc-layer-2 absolute inset-0 bg-white/30 border border-white/50 rounded-sm backdrop-blur-md flex items-center justify-center">
-            <span class="text-navy/50 font-bold text-xs -rotate-45">2. WEAR</span>
-          </div>
-          <div class="spc-layer spc-layer-3 absolute inset-0 bg-blue border border-blue-70 rounded-sm flex items-center justify-center overflow-hidden">
-            <div class="absolute inset-0 opacity-20 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,#000_10px,#000_11px)]"></div>
-            <span class="text-white font-bold text-xs -rotate-45 relative z-10">3. DECOR</span>
-          </div>
-          <div class="spc-layer spc-layer-4 absolute inset-0 bg-sky/70 border-2 border-sky rounded-sm flex items-center justify-center">
-            <span class="text-navy font-black text-lg -rotate-45">4. SPC CORE</span>
-          </div>
-          <div class="spc-layer spc-layer-5 absolute inset-0 bg-navy-90 border border-navy rounded-sm flex items-center justify-center">
-            <span class="text-sky/50 font-bold text-xs -rotate-45">5. PAD</span>
-          </div>
-        </div>
+        {
+          hasLottie ? (
+            <div
+              class="w-full h-full max-w-[560px] p-8"
+              data-spc-lottie
+              data-src={LOTTIE_PUBLIC_PATH}
+            />
+          ) : (
+            <div class="relative w-72 h-72 spc-stack">
+              <div class="spc-layer spc-layer-1 absolute inset-0 bg-sky/40 border border-sky rounded-sm backdrop-blur-sm flex items-center justify-center">
+                <span class="text-navy/60 font-bold text-xs -rotate-45">1. UV</span>
+              </div>
+              <div class="spc-layer spc-layer-2 absolute inset-0 bg-white/30 border border-white/50 rounded-sm backdrop-blur-md flex items-center justify-center">
+                <span class="text-navy/50 font-bold text-xs -rotate-45">2. WEAR</span>
+              </div>
+              <div class="spc-layer spc-layer-3 absolute inset-0 bg-blue border border-blue-70 rounded-sm flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 opacity-20 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,#000_10px,#000_11px)]" />
+                <span class="text-white font-bold text-xs -rotate-45 relative z-10">
+                  3. DECOR
+                </span>
+              </div>
+              <div class="spc-layer spc-layer-4 absolute inset-0 bg-sky/70 border-2 border-sky rounded-sm flex items-center justify-center">
+                <span class="text-navy font-black text-lg -rotate-45">4. SPC CORE</span>
+              </div>
+              <div class="spc-layer spc-layer-5 absolute inset-0 bg-navy-90 border border-navy rounded-sm flex items-center justify-center">
+                <span class="text-sky/50 font-bold text-xs -rotate-45">5. PAD</span>
+              </div>
+            </div>
+          )
+        }
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  // Carga Lottie SOLO si el JSON de la animación existe en /public/anim/.
+  // Sin animación entregada → este script no descarga nada.
+  const LOTTIE_CDN =
+    "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie_svg.min.js";
+
+  async function initSpcLottie() {
+    const host = document.querySelector<HTMLElement>("[data-spc-lottie]");
+    if (!host || host.dataset.ready === "1") return;
+    host.dataset.ready = "1";
+
+    await new Promise<void>((resolve, reject) => {
+      if ((window as any).lottie) return resolve();
+      const s = document.createElement("script");
+      s.src = LOTTIE_CDN;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error("No se pudo cargar lottie-web"));
+      document.head.appendChild(s);
+    });
+
+    const lottie = (window as any).lottie;
+    const anim = lottie.loadAnimation({
+      container: host,
+      renderer: "svg",
+      loop: true,
+      autoplay: true,
+      path: host.dataset.src,
+      rendererSettings: { progressiveLoad: true },
+    });
+
+    const highlight = (id: string | null) => {
+      host.querySelectorAll<SVGElement>('[id^="capa-"]').forEach((el) => {
+        el.style.transition = "opacity .3s ease";
+        el.style.opacity = !id || el.id === id ? "1" : "0.25";
+      });
+    };
+
+    anim.addEventListener("DOMLoaded", () => {
+      // Click directo sobre las capas del SVG (ids #capa-1 … #capa-5)
+      host.querySelectorAll<SVGElement>('[id^="capa-"]').forEach((el) => {
+        el.style.cursor = "pointer";
+        el.addEventListener("click", () => {
+          highlight(el.id);
+          try {
+            anim.goToAndPlay(el.id, true);
+          } catch {
+            /* sin marcador con ese nombre: solo resalta */
+          }
+        });
+      });
+
+      // Click sobre los textos de la izquierda → resalta la capa
+      document
+        .querySelectorAll<HTMLElement>("[data-spc-trigger]")
+        .forEach((t) => {
+          const target = t.dataset.spcTrigger ?? "";
+          const fire = () => {
+            highlight(target);
+            try {
+              anim.goToAndPlay(target, true);
+            } catch {
+              /* noop */
+            }
+          };
+          t.addEventListener("click", fire);
+          t.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              fire();
+            }
+          });
+          t.addEventListener("mouseleave", () => highlight(null));
+        });
+    });
+  }
+
+  initSpcLottie();
+  document.addEventListener("astro:page-load", initSpcLottie);
+</script>

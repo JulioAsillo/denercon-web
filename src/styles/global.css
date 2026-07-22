@@ -96,3 +96,42 @@ html {
   border: 2px solid var(--color-blue);
 }
 
+
+/* ============================================================
+   Carruseles (Carousel.astro)
+   ============================================================ */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+.dc-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.9);
+  color: var(--color-navy);
+  box-shadow: 0 2px 8px rgb(11 31 46 / 0.25);
+  opacity: 0;
+  transition: opacity 0.25s ease, background-color 0.2s ease;
+  cursor: pointer;
+}
+.dc-arrow:hover { background: #fff; }
+.dc-arrow:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--color-blue);
+  outline-offset: 2px;
+}
+.group\/car:hover .dc-arrow { opacity: 1; }
+
+/* En táctil las flechas se quedan siempre visibles (no hay hover) */
+@media (hover: none) {
+  .dc-arrow { opacity: 0.85; }
+}

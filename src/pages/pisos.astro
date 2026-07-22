@@ -4,32 +4,44 @@ import BaseLayout from "@layouts/BaseLayout.astro";
 import SectionHeading from "@components/ui/SectionHeading.astro";
 import ProductCard from "@components/ui/ProductCard.astro";
 import SpcAnatomy from "@components/floors/SpcAnatomy.astro";
+import UseCaseCarousel from "@components/floors/UseCaseCarousel.astro";
 import { floorProducts } from "@data/products";
-import bannerSpc from "@assets/images/floors/spc-ambiente-interior.png";
+
+// HERO FULL-WIDTH — sobrescribe este archivo con el master 3840 x 1600 (12:5).
+// Toma AMPLIA, tono OSCURO / AMADERADO (pedido del cliente).
+// Punto focal en el tercio central horizontal: en móvil el recorte deja solo esa franja.
+import heroFondo from "@assets/images/floors/pisos-hero-fondo.png";
 ---
 <BaseLayout title="Pisos y Revestimientos — D'ENERCON" active="pisos">
-  <!-- Banner superior: partnership SLS -->
-  <header class="py-16 md:py-20 container-site">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-      <div class="flex flex-col space-y-4 order-2 lg:order-1">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-sky/40 text-blue rounded-full w-fit">
-          <span class="material-symbols-outlined text-sm">verified</span>
-          <span class="text-xs font-bold uppercase tracking-wide">Partnership oficial</span>
-        </div>
-        <h1 class="text-4xl lg:text-5xl font-bold text-navy leading-tight">Excelencia en superficies de alta gama</h1>
-        <p class="text-lg text-navy/70 max-w-xl">
-          Descubra nuestra división especializada en pisos y revestimientos. En alianza estratégica con
-          <strong class="text-navy"> SLS Saintlosi</strong>, ofrecemos soluciones arquitectónicas que combinan
-          diseño vanguardista, durabilidad industrial y un acabado premium inigualable.
-        </p>
-      </div>
-      <div class="order-1 lg:order-2 h-64 lg:h-96 w-full rounded-brand overflow-hidden shadow-sm border border-navy/10">
-        <Image src={bannerSpc} alt="Interior de alta gama con piso SPC roble claro." widths={[768, 1280, 1920]} sizes="(max-width: 1024px) 100vw, 50vw" class="w-full h-full object-cover" />
-      </div>
+
+  <!-- ══ HERO: imagen de fondo a todo el ancho + texto encima ══ -->
+  <header class="relative w-full min-h-[540px] md:min-h-[680px] flex items-end overflow-hidden -mt-20">
+    <Image
+      src={heroFondo}
+      alt="Ambiente interior de alta gama con piso SPC en tono amaderado."
+      widths={[768, 1280, 1920, 2560, 3840]}
+      sizes="100vw"
+      loading="eager"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <!-- Velo oscuro: garantiza contraste AA del texto sobre cualquier foto -->
+    <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/70 to-navy/30"></div>
+
+    <div class="relative z-10 container-site pb-16 md:pb-24 pt-32">
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.02] max-w-4xl">
+        Superficies premium para espacios excepcionales
+      </h1>
+      <p class="text-lg md:text-xl text-sky/90 max-w-2xl mt-6">
+        Pisos SPC y revestimientos diseñados para brindar estética, resistencia y valor
+        agregado a proyectos residenciales, comerciales y corporativos.
+      </p>
     </div>
   </header>
 
-  <!-- Catálogo -->
+  <!-- ══ Carrusel full-width de casos de uso ══ -->
+  <UseCaseCarousel />
+
+  <!-- ══ Catálogo ══ -->
   <section class="bg-white py-16 md:py-20">
     <div class="container-site">
       <SectionHeading title="Catálogo de productos" accent="blue" />
