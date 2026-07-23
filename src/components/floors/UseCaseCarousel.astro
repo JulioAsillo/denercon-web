@@ -41,7 +41,7 @@ const cases = Object.entries(modules)
     </div>
 
     <div
-      class="uc relative w-full overflow-hidden h-[58vh] min-h-[420px] max-h-[900px]"
+      class="uc relative w-full mx-auto overflow-hidden aspect-video max-w-[calc((100dvh-11rem)*16/9)] md:rounded-brand"
       data-uc
     >
       {cases.map((c, i) => (
@@ -55,7 +55,7 @@ const cases = Object.entries(modules)
             class="w-full h-full object-cover"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/25 to-transparent"></div>
-          <figcaption class="uc-label absolute left-6 md:left-16 2xl:left-28 bottom-8 md:bottom-14 text-white font-black uppercase tracking-wide text-2xl md:text-4xl 2xl:text-5xl drop-shadow-lg">
+          <figcaption class="uc-label absolute left-4 sm:left-8 md:left-16 2xl:left-28 bottom-10 sm:bottom-12 md:bottom-14 right-4 text-white font-black uppercase tracking-wide text-lg sm:text-2xl md:text-4xl 2xl:text-5xl drop-shadow-lg">
             {c.label}
           </figcaption>
         </figure>
@@ -89,14 +89,19 @@ const cases = Object.entries(modules)
 
   .uc-arrow {
     position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
-    width: 48px; height: 48px; display: grid; place-items: center;
+    width: 36px; height: 36px; display: grid; place-items: center;
     border: none; border-radius: 999px; cursor: pointer;
     color: var(--color-navy); background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2px 14px rgba(0, 0, 0, 0.25); transition: background 0.2s ease;
   }
   .uc-arrow:hover { background: #fff; }
-  .uc-prev { left: 16px; }
-  .uc-next { right: 16px; }
+  .uc-prev { left: 10px; }
+  .uc-next { right: 10px; }
+  @media (min-width: 768px) {
+    .uc-arrow { width: 48px; height: 48px; }
+    .uc-prev { left: 16px; }
+    .uc-next { right: 16px; }
+  }
   @media (min-width: 1536px) {
     .uc-arrow { width: 60px; height: 60px; }
     .uc-prev { left: 32px; }

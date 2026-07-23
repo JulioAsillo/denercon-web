@@ -18,45 +18,44 @@ const hasCarousel = colors.length > 0;
 
 {hasCarousel ? (
   <article
-    class={`rounded-brand border ${cardBg} overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row`}
+    class={`rounded-brand border ${cardBg} overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col group`}
     data-color-carousel
   >
-    <!-- Media 3:4 -->
-    <div class="relative w-full sm:w-[42%] lg:w-[44%] sm:max-w-[460px] shrink-0 p-3 md:p-4">
-      <div class="relative aspect-[3/4] rounded-brand overflow-hidden bg-navy">
-        {colors.map((c, i) => (
-          <div class={`cc-slide absolute inset-0 transition-opacity duration-400 ${i === 0 ? "opacity-100" : "opacity-0"}`} data-label={c.label}>
-            <Image
-              src={c.src}
-              alt={`${product.title} — ${c.label}`}
-              widths={[440, 640, 900, 1280]}
-              sizes="(max-width: 640px) 90vw, (max-width: 1536px) 44vw, 460px"
-              loading={i === 0 ? "eager" : "lazy"}
-              class="w-full h-full object-cover"
-            />
-          </div>
-        ))}
-        <span class="cc-label absolute left-2 bottom-2 z-10 text-white text-xs font-semibold px-2.5 py-1 rounded-full bg-navy/80 backdrop-blur-sm">
-          {colors[0].label}
-        </span>
-        {colors.length > 1 && (
-          <>
-            <button type="button" class="cc-prev absolute left-1.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 grid place-items-center rounded-full bg-white/85 text-navy hover:bg-white" aria-label="Color anterior">
-              <span class="material-symbols-outlined text-[20px]">chevron_left</span>
-            </button>
-            <button type="button" class="cc-next absolute right-1.5 top-1/2 -translate-y-1/2 z-10 w-8 h-8 grid place-items-center rounded-full bg-white/85 text-navy hover:bg-white" aria-label="Color siguiente">
-              <span class="material-symbols-outlined text-[20px]">chevron_right</span>
-            </button>
-          </>
-        )}
-      </div>
+    <!-- Media: carrusel de color grande, ocupa todo el ancho de la card -->
+    <div class="relative aspect-[4/5] w-full overflow-hidden bg-navy">
+      {colors.map((c, i) => (
+        <div class={`cc-slide absolute inset-0 transition-opacity duration-500 ${i === 0 ? "opacity-100" : "opacity-0"}`} data-label={c.label}>
+          <Image
+            src={c.src}
+            alt={`${product.title} — ${c.label}`}
+            widths={[480, 720, 1000, 1400]}
+            sizes="(max-width: 768px) 90vw, (max-width: 1536px) 33vw, 460px"
+            loading={i === 0 ? "eager" : "lazy"}
+            class="w-full h-full object-cover"
+          />
+        </div>
+      ))}
+      <div class="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-navy/70 to-transparent pointer-events-none"></div>
+      <span class="cc-label absolute left-3 bottom-3 z-10 text-white text-sm font-semibold px-3 py-1 rounded-full bg-navy/70 backdrop-blur-sm">
+        {colors[0].label}
+      </span>
+      {product.badge && (
+        <span class={`absolute top-3 right-3 z-10 ${badgeBg} text-white text-xs font-bold px-2.5 py-1 rounded shadow`}>{product.badge}</span>
+      )}
+      {colors.length > 1 && (
+        <>
+          <button type="button" class="cc-prev absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 grid place-items-center rounded-full bg-white/85 text-navy hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Color anterior">
+            <span class="material-symbols-outlined text-[22px]">chevron_left</span>
+          </button>
+          <button type="button" class="cc-next absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 grid place-items-center rounded-full bg-white/85 text-navy hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Color siguiente">
+            <span class="material-symbols-outlined text-[22px]">chevron_right</span>
+          </button>
+        </>
+      )}
     </div>
 
     <!-- Contenido -->
     <div class="p-6 flex-1 flex flex-col">
-      {product.badge && (
-        <span class={`self-start ${badgeBg} text-white text-xs font-bold px-2 py-1 rounded shadow mb-3`}>{product.badge}</span>
-      )}
       <h3 class="text-xl font-bold text-navy mb-1">{product.title}</h3>
       {product.subtitle && <p class="text-sm text-blue font-medium mb-4">{product.subtitle}</p>}
       <ul class="space-y-2 mb-6 flex-1 text-sm text-navy/70">
@@ -74,7 +73,7 @@ const hasCarousel = colors.length > 0;
           ))}
         </div>
       )}
-      <WhatsAppButton message={product.waMessage} label={product.ctaLabel} class="mt-auto" />
+      <WhatsAppButton message={product.waMessage} label={product.ctaLabel} full class="mt-auto" />
     </div>
   </article>
 ) : (
