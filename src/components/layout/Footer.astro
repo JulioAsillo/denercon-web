@@ -4,13 +4,10 @@ import CertificationsBand from "@components/layout/CertificationsBand.astro";
 
 const year = new Date().getFullYear();
 
-// ⚠️ PENDIENTE: "Soluciones" y "Proyectos" no existen como páginas todavía.
-//    Cuando se decida (ver nota), descomentar y apuntar al destino real.
+// El sitio tiene 4 páginas. No hay secciones de "Soluciones" ni "Proyectos".
 const links = [
   { href: "/", label: "Inicio" },
   { href: "/nosotros", label: "Nosotros" },
-  // { href: "/soluciones", label: "Soluciones" },   ← página inexistente
-  // { href: "/proyectos",  label: "Proyectos"  },   ← página inexistente
   { href: "/pisos", label: "Pisos y Revestimientos" },
   { href: "/cortafuego", label: "Seguridad Cortafuego" },
   { href: "/#contacto", label: "Contacto" },
@@ -24,7 +21,14 @@ const links = [
 
     <!-- Columna 1 -->
     <div class="space-y-4">
-      <img src="/brand/denercon-logo-fondo.png" alt="D'ENERCON" class="h-12 w-auto" width="1754" height="1241" />
+      <img
+        src="/brand/denercon-logo-blanco.svg"
+        alt="D'ENERCON"
+        class="h-8 w-auto"
+        width="1280"
+        height="171"
+        loading="lazy"
+      />
       <p class="text-sm text-sky/80 max-w-xs leading-relaxed">
         Especialistas en acabados arquitectónicos y sistemas de protección contra incendios
         para proyectos residenciales, comerciales e industriales.

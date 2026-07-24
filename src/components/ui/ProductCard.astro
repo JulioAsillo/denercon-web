@@ -108,11 +108,19 @@ const hasCarousel = colors.length > 0;
 
 <script>
   function initColorCarousels() {
-    document.querySelectorAll<HTMLElement>("[data-color-carousel]").forEach((card) => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const INTERVAL = 4000;
+
+    document.querySelectorAll<HTMLElement>("[data-color-carousel]").forEach((card, cardIndex) => {
+      // Evita doble inicializacion en navegaciones con View Transitions
+      if (card.dataset.ccReady === "1") return;
+      card.dataset.ccReady = "1";
+
       const slides = Array.from(card.querySelectorAll<HTMLElement>(".cc-slide"));
       const dots = Array.from(card.querySelectorAll<HTMLButtonElement>(".cc-dot"));
       const label = card.querySelector<HTMLElement>(".cc-label");
       if (slides.length === 0) return;
+
       let current = 0;
       const go = (i: number) => {
         current = (i + slides.length) % slides.length;
@@ -127,9 +135,51 @@ const hasCarousel = colors.length > 0;
         });
         if (label) label.textContent = slides[current].dataset.label ?? "";
       };
-      card.querySelector(".cc-prev")?.addEventListener("click", () => go(current - 1));
-      card.querySelector(".cc-next")?.addEventListener("click", () => go(current + 1));
-      dots.forEach((d) => d.addEventListener("click", () => go(Number(d.dataset.index ?? "0"))));
+
+      // ── Autoplay ────────────────────────────────────────────────
+      let timer: number | null = null;
+      let startDelay: number | null = null;
+      let visible = false;
+      let hovered = false;
+
+      const stop = () => {
+        if (startDelay !== null) { clearTimeout(startDelay); startDelay = null; }
+        if (timer !== null) { clearInterval(timer); timer = null; }
+      };
+
+      const play = () => {
+        if (reduce || slides.length < 2 || hovered || !visible || timer !== null || startDelay !== null) return;
+        // Desfase por tarjeta: las 3 del catalogo no cambian todas a la vez
+        startDelay = window.setTimeout(() => {
+          startDelay = null;
+          timer = window.setInterval(() => go(current + 1), INTERVAL);
+        }, (cardIndex % 3) * 900);
+      };
+
+      // Tras una accion manual, reinicia el reloj para no cortar la vista
+      const restart = () => { stop(); play(); };
+
+      card.querySelector(".cc-prev")?.addEventListener("click", () => { go(current - 1); restart(); });
+      card.querySelector(".cc-next")?.addEventListener("click", () => { go(current + 1); restart(); });
+      dots.forEach((d) =>
+        d.addEventListener("click", () => { go(Number(d.dataset.index ?? "0")); restart(); }),
+      );
+
+      card.addEventListener("mouseenter", () => { hovered = true; stop(); });
+      card.addEventListener("mouseleave", () => { hovered = false; play(); });
+      card.addEventListener("focusin", () => { hovered = true; stop(); });
+      card.addEventListener("focusout", () => { hovered = false; play(); });
+      document.addEventListener("visibilitychange", () => (document.hidden ? stop() : play()));
+
+      // Solo corre mientras la tarjeta esta en pantalla
+      new IntersectionObserver(
+        (entries) =>
+          entries.forEach((e) => {
+            visible = e.isIntersecting;
+            visible ? play() : stop();
+          }),
+        { threshold: 0.35 },
+      ).observe(card);
     });
   }
   initColorCarousels();

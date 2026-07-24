@@ -2,23 +2,36 @@
 import fs from "node:fs";
 
 // ════════════════════════════════════════════════════════════════════
-//  ANIMACIÓN (After Effects → Lottie)
+//  ANIMACIÓN "Anatomía de un piso ígneo"  (After Effects → video)
 // ════════════════════════════════════════════════════════════════════
-//  Cuando el animador entregue el JSON, colócalo EXACTAMENTE en:
-//      public/anim/spc-anatomy.json
-//  No hace falta tocar código: si el archivo existe, esta sección
-//  reemplaza automáticamente la pila CSS por la animación Lottie.
-//  Si no existe, se muestra la pila isométrica CSS de siempre.
+//  Assets esperados en public/anim/ :
+//      spc-anatomy.mp4          ← principal, compatible con todo
+//      spc-anatomy.webm         ← opcional, más liviano (VP9)
+//      spc-anatomy-poster.jpg   ← opcional, evita el flash de carga
 //
-//  Para que el CLICK EN CAPAS funcione, el animador debe:
-//   · Nombrar cada capa en AE como:  #capa-1  ...  #capa-5
-//     (Bodymovin convierte "#nombre" en el atributo id del SVG)
-//   · Crear un MARCADOR de composición por capa: capa-1 … capa-5
+//  Si el .mp4 NO existe, el componente cae automáticamente a la pila
+//  isométrica CSS de siempre. No hay que tocar código para activarlo.
+//
+//  Origen: secuencia PNG 1200x1600 @ 30 fps, 360 frames = 12.000 s,
+//  compuesta sobre #0B1F2E al codificar (el alpha venía en los PNG).
 // ════════════════════════════════════════════════════════════════════
-const LOTTIE_PUBLIC_PATH = "/anim/spc-anatomy.json";
-const hasLottie = fs.existsSync(
-  new URL("../../../public/anim/spc-anatomy.json", import.meta.url),
-);
+const publicFile = (f: string) =>
+  fs.existsSync(new URL(`../../../public/anim/${f}`, import.meta.url));
+
+const hasVideo = publicFile("spc-anatomy.mp4");
+const hasWebm = publicFile("spc-anatomy.webm");
+const hasPoster = publicFile("spc-anatomy-poster.jpg");
+
+// Beats de la animación (segundos). Cada capa queda activa hasta que
+// arranca la siguiente, así el resaltado nunca se apaga entre medias.
+//   0.0 – 1.0  despliegue de las 5 láminas, sin resaltado
+const BEATS = [
+  { n: 1, start: 1.0 },
+  { n: 2, start: 2.0 },
+  { n: 3, start: 4.0 },
+  { n: 4, start: 6.0 },
+  { n: 5, start: 9.0 },
+];
 
 const layers = [
   {
@@ -49,11 +62,12 @@ const layers = [
 ];
 ---
 
-<section class="container-site py-20 md:py-28">
-  <div class="bg-white rounded-brand shadow-sm overflow-hidden border border-navy/10">
+<section class="w-full bg-white border-y border-navy/10">
+  <div>
     <div class="grid grid-cols-1 lg:grid-cols-2 group spc-perspective">
       <!-- Izquierda: textos interactivos -->
-      <div class="p-10 lg:p-16 flex flex-col justify-center relative z-10">
+      <div class="px-6 py-14 sm:px-10 lg:px-16 xl:px-24 lg:py-24 flex flex-col justify-center relative z-10 order-2 lg:order-1">
+        <div class="w-full max-w-2xl lg:ml-auto">
         <span class="text-blue text-sm font-bold tracking-widest uppercase mb-3">
           Ingeniería de superficie
         </span>
@@ -82,26 +96,37 @@ const layers = [
             ))
           }
         </div>
+        </div>
       </div>
 
-      <!-- Derecha: animación (Lottie si existe) o pila isométrica CSS -->
+      <!-- Derecha: video de la animación, o pila isométrica CSS -->
       <div
-        class="bg-navy min-h-[520px] lg:min-h-[720px] flex items-center justify-center relative overflow-hidden spc-visual group-hover:bg-navy-90 transition-colors duration-500"
+        class={`order-1 lg:order-2 h-[62svh] min-h-[380px] max-h-[560px] lg:h-auto lg:max-h-none lg:min-h-[760px] flex items-center justify-center relative overflow-hidden spc-visual transition-colors duration-500 ${hasVideo ? "" : "bg-navy group-hover:bg-navy-90"}`}
+        style={hasVideo ? "background-color:#0B1F2E" : undefined}
       >
         <div
-          class="absolute bottom-6 right-6 text-white/40 text-xs tracking-widest uppercase flex items-center gap-2 z-10"
+          class="absolute bottom-6 right-6 text-white/40 text-xs tracking-widest uppercase flex items-center gap-2 z-10 pointer-events-none"
         >
           <span class="material-symbols-outlined text-base animate-bounce">touch_app</span>
-          {hasLottie ? "Haz clic en una capa" : "Pasa el cursor"}
+          {hasVideo ? "Haz clic en una capa" : "Pasa el cursor"}
         </div>
 
         {
-          hasLottie ? (
-            <div
-              class="w-full h-full max-w-[560px] p-8"
-              data-spc-lottie
-              data-src={LOTTIE_PUBLIC_PATH}
-            />
+          hasVideo ? (
+            <video
+              class="w-full h-full object-contain p-6 lg:p-10"
+              data-spc-video
+              data-beats={JSON.stringify(BEATS)}
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              aria-label="Animación de las cinco capas de un piso SPC"
+              poster={hasPoster ? "/anim/spc-anatomy-poster.jpg" : undefined}
+            >
+              {hasWebm && <source src="/anim/spc-anatomy.webm" type="video/webm" />}
+              <source src="/anim/spc-anatomy.mp4" type="video/mp4" />
+            </video>
           ) : (
             <div class="relative w-72 h-72 spc-stack">
               <div class="spc-layer spc-layer-1 absolute inset-0 bg-sky/40 border border-sky rounded-sm backdrop-blur-sm flex items-center justify-center">
@@ -131,81 +156,90 @@ const layers = [
 </section>
 
 <script>
-  // Carga Lottie SOLO si el JSON de la animación existe en /public/anim/.
-  // Sin animación entregada → este script no descarga nada.
-  const LOTTIE_CDN =
-    "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie_svg.min.js";
+  // Sincroniza los textos de la izquierda con el video de la derecha.
+  // Si no hay video renderizado (fallback CSS), no hace nada.
+  type Beat = { n: number; start: number };
 
-  async function initSpcLottie() {
-    const host = document.querySelector<HTMLElement>("[data-spc-lottie]");
-    if (!host || host.dataset.ready === "1") return;
-    host.dataset.ready = "1";
+  function initSpcVideo() {
+    const video = document.querySelector<HTMLVideoElement>("[data-spc-video]");
+    if (!video || video.dataset.ready === "1") return;
+    video.dataset.ready = "1";
 
-    await new Promise<void>((resolve, reject) => {
-      if ((window as any).lottie) return resolve();
-      const s = document.createElement("script");
-      s.src = LOTTIE_CDN;
-      s.onload = () => resolve();
-      s.onerror = () => reject(new Error("No se pudo cargar lottie-web"));
-      document.head.appendChild(s);
-    });
+    const beats: Beat[] = JSON.parse(video.dataset.beats ?? "[]");
+    const triggers = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-spc-trigger]"),
+    );
+    if (beats.length === 0 || triggers.length === 0) return;
 
-    const lottie = (window as any).lottie;
-    const anim = lottie.loadAnimation({
-      container: host,
-      renderer: "svg",
-      loop: true,
-      autoplay: true,
-      path: host.dataset.src,
-      rendererSettings: { progressiveLoad: true },
-    });
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const highlight = (id: string | null) => {
-      host.querySelectorAll<SVGElement>('[id^="capa-"]').forEach((el) => {
-        el.style.transition = "opacity .3s ease";
-        el.style.opacity = !id || el.id === id ? "1" : "0.25";
+    // ── Resaltado del texto ──────────────────────────────────────
+    let active = -1;
+    const paint = (n: number) => {
+      if (n === active) return;
+      active = n;
+      triggers.forEach((t) => {
+        const mine = Number(t.dataset.spcTrigger?.replace("capa-", "") ?? "0");
+        const on = mine === n;
+        t.classList.toggle("border-blue", on);
+        t.classList.toggle("border-transparent", !on);
+        t.classList.toggle("bg-surface", on);
+        t.setAttribute("aria-current", on ? "true" : "false");
       });
     };
 
-    anim.addEventListener("DOMLoaded", () => {
-      // Click directo sobre las capas del SVG (ids #capa-1 … #capa-5)
-      host.querySelectorAll<SVGElement>('[id^="capa-"]').forEach((el) => {
-        el.style.cursor = "pointer";
-        el.addEventListener("click", () => {
-          highlight(el.id);
-          try {
-            anim.goToAndPlay(el.id, true);
-          } catch {
-            /* sin marcador con ese nombre: solo resalta */
-          }
-        });
-      });
+    // Capa correspondiente a un instante dado (-1 = despliegue inicial)
+    const beatAt = (t: number) => {
+      let n = -1;
+      for (const b of beats) if (t >= b.start) n = b.n;
+      return n;
+    };
 
-      // Click sobre los textos de la izquierda → resalta la capa
-      document
-        .querySelectorAll<HTMLElement>("[data-spc-trigger]")
-        .forEach((t) => {
-          const target = t.dataset.spcTrigger ?? "";
-          const fire = () => {
-            highlight(target);
-            try {
-              anim.goToAndPlay(target, true);
-            } catch {
-              /* noop */
-            }
-          };
-          t.addEventListener("click", fire);
-          t.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              fire();
-            }
-          });
-          t.addEventListener("mouseleave", () => highlight(null));
-        });
+    video.addEventListener("timeupdate", () => paint(beatAt(video.currentTime)));
+
+    // ── Clic / teclado: salta al beat y reanuda el loop ──────────
+    triggers.forEach((t) => {
+      const n = Number(t.dataset.spcTrigger?.replace("capa-", "") ?? "0");
+      const beat = beats.find((b) => b.n === n);
+      if (!beat) return;
+
+      t.setAttribute("aria-label", `Ver capa ${n} en la animación`);
+      const jump = () => {
+        // +0.05 s para caer dentro del beat, no justo en el borde
+        video.currentTime = beat.start + 0.05;
+        paint(n);
+        if (!reduce) video.play().catch(() => {});
+      };
+      t.addEventListener("click", jump);
+      t.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          jump();
+        }
+      });
+    });
+
+    // ── Reproducción solo en pantalla ────────────────────────────
+    if (reduce) {
+      // Sin autoplay: se muestra el primer frame y los clics siguen sirviendo
+      video.pause();
+      return;
+    }
+
+    new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) video.play().catch(() => {});
+          else video.pause();
+        }),
+      { threshold: 0.25 },
+    ).observe(video);
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) video.pause();
     });
   }
 
-  initSpcLottie();
-  document.addEventListener("astro:page-load", initSpcLottie);
+  initSpcVideo();
+  document.addEventListener("astro:page-load", initSpcVideo);
 </script>

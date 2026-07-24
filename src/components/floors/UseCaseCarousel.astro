@@ -2,7 +2,10 @@
 /**
  * UseCaseCarousel.astro — Casos de uso (/pisos)
  * -----------------------------------------------------------------------------
- * Banda FULL-BLEED (todo el ancho de pantalla, hasta 4K). Una imagen a la vez
+ * Banda FULL-BLEED: 100% del ancho del viewport y alto = pantalla menos el
+ * Navbar fijo (h-20 = 5rem). El titulo "Casos de uso" va SOBRE la imagen para
+ * no dejar una franja navy vacia entre el hero y el carrusel.
+ * Una imagen a la vez
  * con crossfade; la etiqueta "Uso en …" aparece con un fade-up en cada cambio.
  *
  * Imágenes en:  src/assets/images/floors/casos-uso/
@@ -11,7 +14,6 @@
  * Carpeta vacía → la sección no se renderiza (no rompe el build).
  */
 import { Image } from "astro:assets";
-import SectionHeading from "@components/ui/SectionHeading.astro";
 
 type CaseModule = { default: ImageMetadata };
 const modules = import.meta.glob<CaseModule>(
@@ -35,13 +37,9 @@ const cases = Object.entries(modules)
 ---
 
 {cases.length > 0 && (
-  <section class="bg-navy">
-    <div class="container-site pt-14 md:pt-20 pb-6 md:pb-8">
-      <SectionHeading title="Casos de uso" accent="blue" />
-    </div>
-
+  <section class="relative bg-navy">
     <div
-      class="uc relative w-full mx-auto overflow-hidden aspect-video max-w-[calc((100dvh-11rem)*16/9)] md:rounded-brand"
+      class="uc relative w-full overflow-hidden h-[calc(100svh-5rem)] min-h-[480px] max-h-[1000px]"
       data-uc
     >
       {cases.map((c, i) => (
@@ -54,12 +52,25 @@ const cases = Object.entries(modules)
             loading={i === 0 ? "eager" : "lazy"}
             class="w-full h-full object-cover"
           />
-          <div class="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/25 to-transparent"></div>
-          <figcaption class="uc-label absolute left-4 sm:left-8 md:left-16 2xl:left-28 bottom-10 sm:bottom-12 md:bottom-14 right-4 text-white font-black uppercase tracking-wide text-lg sm:text-2xl md:text-4xl 2xl:text-5xl drop-shadow-lg">
+          {/* Velo inferior (legibilidad de la etiqueta) */}
+          <div class="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/20 to-transparent"></div>
+          <figcaption class="uc-label absolute left-4 sm:left-8 md:left-16 2xl:left-28 bottom-14 sm:bottom-16 md:bottom-20 right-4 text-white font-black uppercase tracking-wide text-lg sm:text-2xl md:text-4xl 2xl:text-5xl drop-shadow-lg">
             {c.label}
           </figcaption>
         </figure>
       ))}
+
+      {/* Velo superior + título sobre la imagen: evita la franja navy muerta
+          entre el hero y el carrusel. */}
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-40 md:h-52 bg-gradient-to-b from-navy/90 via-navy/45 to-transparent z-10"></div>
+      <div class="absolute inset-x-0 top-0 z-20 pt-8 md:pt-12">
+        <div class="container-site">
+          <h2 class="text-2xl md:text-3xl font-bold text-white border-l-4 border-blue pl-4 inline-block">
+            Casos de uso
+          </h2>
+          <div class="h-1 w-24 bg-blue rounded-full mt-3"></div>
+        </div>
+      </div>
 
       {cases.length > 1 && (
         <>
@@ -69,7 +80,7 @@ const cases = Object.entries(modules)
           <button type="button" class="uc-arrow uc-next" aria-label="Siguiente">
             <span class="material-symbols-outlined">chevron_right</span>
           </button>
-          <div class="uc-dots absolute left-1/2 -translate-x-1/2 bottom-5 flex gap-2 z-10"></div>
+          <div class="uc-dots absolute left-1/2 -translate-x-1/2 bottom-6 flex gap-2 z-20"></div>
         </>
       )}
     </div>
@@ -88,7 +99,7 @@ const cases = Object.entries(modules)
   @keyframes ucLabelIn { to { opacity: 1; transform: translateY(0); } }
 
   .uc-arrow {
-    position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 20;
     width: 36px; height: 36px; display: grid; place-items: center;
     border: none; border-radius: 999px; cursor: pointer;
     color: var(--color-navy); background: rgba(255, 255, 255, 0.9);
