@@ -1,18 +1,30 @@
 ---
-import { certifications } from "@data/certifications";
+import { certificationList } from "@data/certifications";
 // Duplicamos la lista para el efecto de scroll infinito
-const loop = [...certifications, ...certifications];
+const loop = [...certificationList, ...certificationList];
 ---
 <section class="w-full bg-navy py-8 overflow-hidden relative flex flex-col items-center marquee-container">
   <p class="text-sky/60 text-xs tracking-[0.2em] uppercase mb-6 font-semibold">
     Respaldados por normativas internacionales
   </p>
 
-  <div class="flex w-max animate-marquee">
+  <div class="flex w-max animate-marquee items-center">
     {loop.map((cert) => (
-        <div class="flex items-center gap-2 px-8 opacity-50 hover:opacity-100 transition-opacity duration-300 cursor-default shrink-0">
-          <span class="material-symbols-outlined text-sky text-[28px]">verified</span>
-          <span class="text-white font-bold text-lg tracking-widest whitespace-nowrap">{cert}</span>
+        <div class="flex items-center justify-center px-10 opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-default shrink-0">
+          {cert.logo ? (
+            <img
+              src={cert.logo}
+              alt={cert.alt ?? cert.name}
+              loading="lazy"
+              decoding="async"
+              class="h-10 md:h-12 w-auto object-contain"
+            />
+          ) : (
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-sky text-[28px]">verified</span>
+              <span class="text-white font-bold text-lg tracking-widest whitespace-nowrap">{cert.name}</span>
+            </div>
+          )}
         </div>
     ))}
   </div>

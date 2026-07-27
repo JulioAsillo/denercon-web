@@ -115,7 +115,7 @@ export const fireProducts: Product[] = [
     alt: "Puerta de acero entreabierta mostrando el núcleo de lana de roca / honeycomb.",
     badge: "Resistencia al Fuego: 3 Horas",
     features: [
-      { icon: "shield", text: "Pieles de acero galvanizado 16GA" },
+      { icon: "shield", text: "Láminas de acero galvanizado 16GA" },
       { icon: "layers", text: "Núcleo lana de roca / honeycomb" },
       { icon: "meeting_room", text: "Configuración de una o dos hojas" },
       { icon: "local_fire_department", text: "Resistencia al fuego de 1 a 3 horas" },
