@@ -1,23 +1,215 @@
 ---
-import { certifications } from "@data/certifications";
-// Duplicamos la lista para el efecto de scroll infinito
-const loop = [...certifications, ...certifications];
+// src/components/TrustRibbon.astro
+import { Image } from 'astro:assets';
+import { certifications } from '../data/certifications';
+
+interface Props {
+  title?: string;
+  showLabels?: boolean;
+}
+
+const { title = 'Certificaciones D\'ENERCON', showLabels = false } = Astro.props;
+
+// Duplicar certificaciones para efecto infinito en marquee
+const duplicatedCerts = [...certifications, ...certifications];
 ---
-<section class="w-full bg-navy py-8 overflow-hidden relative flex flex-col items-center marquee-container">
-  <p class="text-sky/60 text-xs tracking-[0.2em] uppercase mb-6 font-semibold">
-    Respaldados por normativas internacionales
-  </p>
 
-  <div class="flex w-max animate-marquee">
-    {loop.map((cert) => (
-        <div class="flex items-center gap-2 px-8 opacity-50 hover:opacity-100 transition-opacity duration-300 cursor-default shrink-0">
-          <span class="material-symbols-outlined text-sky text-[28px]">verified</span>
-          <span class="text-white font-bold text-lg tracking-widest whitespace-nowrap">{cert}</span>
+<section class="trust-ribbon-section">
+  <div class="container mx-auto px-4 py-16">
+    {title && (
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-navy-900">
+          {title}
+        </h2>
+        <p class="text-gray-600 mt-2">
+          Cumplimos con los estándares internacionales más exigentes
+        </p>
+      </div>
+    )}
+
+    <div class="trust-ribbon-container">
+      <div class="marquee-wrapper">
+        <div class="marquee-track">
+          {duplicatedCerts.map((cert, idx) => (
+            <div key={`${cert.id}-${idx}`} class="cert-item">
+              <div class="cert-logo-wrapper">
+                <img
+                  src={cert.imageUrl}
+                  alt={cert.altText}
+                  title={cert.name}
+                  loading="lazy"
+                  class="cert-logo"
+                />
+              </div>
+              {showLabels && (
+                <div class="cert-label">
+                  <span class="text-sm font-semibold text-navy-900">
+                    {cert.name}
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
-    ))}
-  </div>
+      </div>
+    </div>
 
-  <!-- Gradientes laterales para suavizar entrada/salida -->
-  <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-navy to-transparent pointer-events-none"></div>
-  <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-navy to-transparent pointer-events-none"></div>
+    {/* Sección de detalles de certificaciones */}
+    <div class="certifications-grid mt-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {certifications.map((cert) => (
+          <div key={cert.id} class="certification-card">
+            <div class="cert-card-logo">
+              <img
+                src={cert.imageUrl}
+                alt={cert.altText}
+                class="w-16 h-16 object-contain"
+              />
+            </div>
+            <h3 class="text-lg font-bold text-navy-900 mt-4">
+              {cert.name}
+            </h3>
+            <p class="text-sm text-gray-600 mt-2">
+              {cert.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
 </section>
+
+<style define:vars={{ logoSize: '64px' }}>
+  .trust-ribbon-section {
+    background: linear-gradient(135deg, var(--color-surface) 0%, rgba(193, 218, 229, 0.1) 100%);
+    border-top: 1px solid var(--color-sky);
+    border-bottom: 1px solid var(--color-sky);
+  }
+
+  .trust-ribbon-container {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(11, 31, 46, 0.08);
+    overflow: hidden;
+  }
+
+  .marquee-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 32px;
+    animation: marquee 40s linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-50% - 16px));
+    }
+  }
+
+  .marquee-wrapper:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .cert-item {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+  }
+
+  .cert-logo-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--logoSize);
+    height: var(--logoSize);
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--color-sky);
+    padding: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .cert-item:hover .cert-logo-wrapper {
+    background: var(--color-sky);
+    border-color: var(--color-blue);
+    box-shadow: 0 4px 12px rgba(49, 83, 160, 0.15);
+    transform: scale(1.1);
+  }
+
+  .cert-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: grayscale(100%);
+    transition: filter 0.3s ease;
+  }
+
+  .cert-item:hover .cert-logo {
+    filter: grayscale(0%);
+  }
+
+  .cert-label {
+    text-align: center;
+  }
+
+  .certifications-grid {
+    border-top: 1px solid var(--color-sky);
+    padding-top: 24px;
+  }
+
+  .certification-card {
+    background: white;
+    border: 1px solid var(--color-sky);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .certification-card:hover {
+    border-color: var(--color-blue);
+    box-shadow: 0 8px 24px rgba(49, 83, 160, 0.12);
+    transform: translateY(-4px);
+  }
+
+  .cert-card-logo {
+    display: flex;
+    justify-content: center;
+    background: var(--color-surface);
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .cert-item {
+      min-width: 80px;
+    }
+
+    .cert-logo-wrapper {
+      width: 56px;
+      height: 56px;
+    }
+
+    .marquee-track {
+      gap: 24px;
+    }
+
+    .certifications-grid {
+      display: none;
+    }
+  }
+</style>
