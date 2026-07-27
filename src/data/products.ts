@@ -130,8 +130,8 @@ export const fireProducts: Product[] = [
     image: barra,
     alt: "Barra antipánico DT-F1200 en acero inoxidable pulido sobre puerta grafito.",
     features: [
-      { icon: "swap_horiz", text: "Modelos DT-F1200 horizontal" },
-      { icon: "swap_vert", text: "Modelos DT-F1200 vertical" },
+      { icon: "swap_horiz", text: "Cumplimiento de normativas de seguridad" },
+      { icon: "swap_vert", text: "Alta resistencia y durabilidad" },
       { icon: "verified", text: "Certificación UL-CE" },
       { icon: "exit_to_app", text: "Evacuación segura garantizada" },
     ],
