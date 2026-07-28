@@ -21,7 +21,7 @@ const hasCarousel = colors.length > 0;
     class={`rounded-brand border ${cardBg} overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col group`}
     data-color-carousel
   >
-    <!-- Media: carrusel de color grande, ocupa todo el ancho de la card -->
+    <!-- Media: imagen grande del color activo -->
     <div class="relative aspect-[4/5] w-full overflow-hidden bg-navy">
       {colors.map((c, i) => (
         <div class={`cc-slide absolute inset-0 transition-opacity duration-500 ${i === 0 ? "opacity-100" : "opacity-0"}`} data-label={c.label}>
@@ -42,17 +42,35 @@ const hasCarousel = colors.length > 0;
       {product.badge && (
         <span class={`absolute top-3 right-3 z-10 ${badgeBg} text-white text-xs font-bold px-2.5 py-1 rounded shadow`}>{product.badge}</span>
       )}
-      {colors.length > 1 && (
-        <>
-          <button type="button" class="cc-prev absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 grid place-items-center rounded-full bg-white/85 text-navy hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Color anterior">
-            <span class="material-symbols-outlined text-[22px]">chevron_left</span>
-          </button>
-          <button type="button" class="cc-next absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 grid place-items-center rounded-full bg-white/85 text-navy hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Color siguiente">
-            <span class="material-symbols-outlined text-[22px]">chevron_right</span>
-          </button>
-        </>
-      )}
     </div>
+
+    <!-- Grilla de colores: todas las muestras visibles con su nombre -->
+    {colors.length > 1 && (
+      <div class="px-4 pt-4">
+        <div class="grid grid-cols-5 gap-2">
+          {colors.map((c, i) => (
+            <button
+              type="button"
+              class={`cc-thumb group/thumb flex flex-col items-center gap-1 rounded-lg p-1 transition ${i === 0 ? "ring-2 ring-blue" : "ring-1 ring-navy/10 hover:ring-navy/30"}`}
+              data-index={i}
+              aria-label={`Ver ${c.label}`}
+            >
+              <span class="block w-full aspect-square overflow-hidden rounded-md bg-navy/5">
+                <Image
+                  src={c.src}
+                  alt={`${product.title} — ${c.label}`}
+                  widths={[120, 240]}
+                  sizes="80px"
+                  loading="lazy"
+                  class="w-full h-full object-cover"
+                />
+              </span>
+              <span class="cc-thumb-label text-[10px] leading-tight text-center text-navy/70 line-clamp-2">{c.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
 
     <!-- Contenido -->
     <div class="p-6 flex-1 flex flex-col">
@@ -66,13 +84,6 @@ const hasCarousel = colors.length > 0;
           </li>
         ))}
       </ul>
-      {colors.length > 1 && (
-        <div class="cc-dots flex gap-1.5 mb-5">
-          {colors.map((c, i) => (
-            <button type="button" class={`cc-dot w-2 h-2 rounded-full transition ${i === 0 ? "bg-blue scale-125" : "bg-navy/25"}`} data-index={i} aria-label={c.label}></button>
-          ))}
-        </div>
-      )}
       <WhatsAppButton message={product.waMessage} label={product.ctaLabel} full class="mt-auto" />
     </div>
   </article>
@@ -107,81 +118,41 @@ const hasCarousel = colors.length > 0;
 )}
 
 <script>
-  function initColorCarousels() {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const INTERVAL = 4000;
-
-    document.querySelectorAll<HTMLElement>("[data-color-carousel]").forEach((card, cardIndex) => {
+  function initColorGrids() {
+    document.querySelectorAll<HTMLElement>("[data-color-carousel]").forEach((card) => {
       // Evita doble inicializacion en navegaciones con View Transitions
       if (card.dataset.ccReady === "1") return;
       card.dataset.ccReady = "1";
 
       const slides = Array.from(card.querySelectorAll<HTMLElement>(".cc-slide"));
-      const dots = Array.from(card.querySelectorAll<HTMLButtonElement>(".cc-dot"));
+      const thumbs = Array.from(card.querySelectorAll<HTMLButtonElement>(".cc-thumb"));
       const label = card.querySelector<HTMLElement>(".cc-label");
       if (slides.length === 0) return;
 
-      let current = 0;
       const go = (i: number) => {
-        current = (i + slides.length) % slides.length;
+        const current = (i + slides.length) % slides.length;
         slides.forEach((s, idx) => {
           s.classList.toggle("opacity-100", idx === current);
           s.classList.toggle("opacity-0", idx !== current);
         });
-        dots.forEach((d, idx) => {
-          d.classList.toggle("bg-blue", idx === current);
-          d.classList.toggle("scale-125", idx === current);
-          d.classList.toggle("bg-navy/25", idx !== current);
+        thumbs.forEach((t, idx) => {
+          const active = idx === current;
+          t.classList.toggle("ring-2", active);
+          t.classList.toggle("ring-blue", active);
+          t.classList.toggle("ring-1", !active);
+          t.classList.toggle("ring-navy/10", !active);
         });
         if (label) label.textContent = slides[current].dataset.label ?? "";
       };
 
-      // ── Autoplay ────────────────────────────────────────────────
-      let timer: number | null = null;
-      let startDelay: number | null = null;
-      let visible = false;
-      let hovered = false;
-
-      const stop = () => {
-        if (startDelay !== null) { clearTimeout(startDelay); startDelay = null; }
-        if (timer !== null) { clearInterval(timer); timer = null; }
-      };
-
-      const play = () => {
-        if (reduce || slides.length < 2 || hovered || !visible || timer !== null || startDelay !== null) return;
-        // Desfase por tarjeta: las 3 del catalogo no cambian todas a la vez
-        startDelay = window.setTimeout(() => {
-          startDelay = null;
-          timer = window.setInterval(() => go(current + 1), INTERVAL);
-        }, (cardIndex % 3) * 900);
-      };
-
-      // Tras una accion manual, reinicia el reloj para no cortar la vista
-      const restart = () => { stop(); play(); };
-
-      card.querySelector(".cc-prev")?.addEventListener("click", () => { go(current - 1); restart(); });
-      card.querySelector(".cc-next")?.addEventListener("click", () => { go(current + 1); restart(); });
-      dots.forEach((d) =>
-        d.addEventListener("click", () => { go(Number(d.dataset.index ?? "0")); restart(); }),
-      );
-
-      card.addEventListener("mouseenter", () => { hovered = true; stop(); });
-      card.addEventListener("mouseleave", () => { hovered = false; play(); });
-      card.addEventListener("focusin", () => { hovered = true; stop(); });
-      card.addEventListener("focusout", () => { hovered = false; play(); });
-      document.addEventListener("visibilitychange", () => (document.hidden ? stop() : play()));
-
-      // Solo corre mientras la tarjeta esta en pantalla
-      new IntersectionObserver(
-        (entries) =>
-          entries.forEach((e) => {
-            visible = e.isIntersecting;
-            visible ? play() : stop();
-          }),
-        { threshold: 0.35 },
-      ).observe(card);
+      // Clic (o foco por teclado) en una miniatura -> cambia la imagen grande
+      thumbs.forEach((t) => {
+        const idx = Number(t.dataset.index ?? "0");
+        t.addEventListener("click", () => go(idx));
+        t.addEventListener("mouseenter", () => go(idx));
+      });
     });
   }
-  initColorCarousels();
-  document.addEventListener("astro:page-load", initColorCarousels);
+  initColorGrids();
+  document.addEventListener("astro:page-load", initColorGrids);
 </script>

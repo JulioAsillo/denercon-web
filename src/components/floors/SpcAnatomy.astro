@@ -165,6 +165,15 @@ const layers = [
     if (!video || video.dataset.ready === "1") return;
     video.dataset.ready = "1";
 
+    // ── Velocidad de reproducción ────────────────────────────────
+    // 1 = normal · 0.5 = mitad de velocidad · 0.75 = un poco más lento.
+    // Los textos siguen sincronizados solos (se guían por currentTime).
+    const PLAYBACK_RATE = 0.5;
+    video.playbackRate = PLAYBACK_RATE;
+    video.addEventListener("loadedmetadata", () => {
+      video.playbackRate = PLAYBACK_RATE;
+    });
+
     const beats: Beat[] = JSON.parse(video.dataset.beats ?? "[]");
     const triggers = Array.from(
       document.querySelectorAll<HTMLElement>("[data-spc-trigger]"),
@@ -208,7 +217,10 @@ const layers = [
         // +0.05 s para caer dentro del beat, no justo en el borde
         video.currentTime = beat.start + 0.05;
         paint(n);
-        if (!reduce) video.play().catch(() => {});
+        if (!reduce) {
+          video.playbackRate = PLAYBACK_RATE;
+          video.play().catch(() => {});
+        }
       };
       t.addEventListener("click", jump);
       t.addEventListener("keydown", (e) => {

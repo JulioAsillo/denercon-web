@@ -4,12 +4,14 @@ import CertificationsBand from "@components/layout/CertificationsBand.astro";
 
 const year = new Date().getFullYear();
 
-// El sitio tiene 4 páginas. No hay secciones de "Soluciones" ni "Proyectos".
+// Enlaces rápidos del footer.
+// "Soluciones" y "Proyectos" se muestran como texto (href: null) porque esas
+// páginas no existen todavía; así no generan enlaces rotos (404).
 const links = [
   { href: "/", label: "Inicio" },
   { href: "/nosotros", label: "Nosotros" },
-  { href: "/pisos", label: "Pisos y Revestimientos" },
-  { href: "/cortafuego", label: "Seguridad Cortafuego" },
+  { href: null, label: "Soluciones" },
+  { href: null, label: "Proyectos" },
   { href: "/#contacto", label: "Contacto" },
 ];
 ---
@@ -20,7 +22,7 @@ const links = [
   <div class="container-site grid grid-cols-1 md:grid-cols-3 gap-10 pb-12">
 
     <!-- Columna 1 -->
-    <div class="space-y-4">
+    <div class="flex flex-col items-center text-center space-y-4">
       <img
         src="/brand/denercon-logo-blanco.svg"
         alt="D'ENERCON"
@@ -39,7 +41,11 @@ const links = [
     <div class="flex flex-col gap-2">
       <h3 class="font-bold text-white mb-2 uppercase tracking-wider text-sm">Enlaces rápidos</h3>
       {links.map((l) => (
-        <a href={l.href} class="text-sky/80 hover:text-white transition-colors text-sm">{l.label}</a>
+        l.href ? (
+          <a href={l.href} class="text-sky/80 hover:text-white transition-colors text-sm">{l.label}</a>
+        ) : (
+          <span class="text-sky/80 text-sm cursor-default">{l.label}</span>
+        )
       ))}
     </div>
 
@@ -75,8 +81,11 @@ const links = [
 
   <!-- Barra inferior -->
   <div class="border-t border-white/10">
-    <div class="container-site py-6">
-      <p class="text-xs text-sky/50 text-center">
+    <div class="container-site py-6 space-y-1 text-center">
+      <p class="text-sm text-sky/80">
+        Comprometidos con la excelencia técnica y la satisfacción de nuestros clientes.
+      </p>
+      <p class="text-xs text-sky/50">
         © {year} {site.brand} S.A.C. Todos los derechos reservados.
       </p>
     </div>

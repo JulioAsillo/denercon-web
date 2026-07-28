@@ -14,25 +14,34 @@ import { floorProducts, fireProducts } from "@data/products";
   </div>
   <TrustRibbon />
 
-  <section class="py-16 md:py-20 bg-surface">
-    <div class="container-site space-y-20">
-      <div>
-        <SectionHeading title="Pisos SPC, pisos laminados y Wall Panels: acabados de arquitectura" accent="blue" />
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-          {floorProducts.map((p) => <ProductCard product={p} accent="blue" />)}
+  {/* ─────────────────────────────────────────────────────────────────────
+      SECCIÓN DE PRODUCTOS — OCULTA EN EL INICIO
+      Los botones del hero ya redirigen a /pisos y /cortafuego, por lo que
+      esta sección es redundante en el home. Se conserva el código: para
+      reactivarla, quita las llaves de comentario que la envuelven.
+      (El detalle sigue visible en las páginas /pisos y /cortafuego.)
+  ────────────────────────────────────────────────────────────────────── */}
+  {false && (
+    <section class="py-16 md:py-20 bg-surface">
+      <div class="container-site space-y-20">
+        <div>
+          <SectionHeading title="Pisos SPC, pisos laminados y Wall Panels: acabados de arquitectura" accent="blue" />
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+            {floorProducts.map((p) => <ProductCard product={p} accent="blue" />)}
+          </div>
+        </div>
+
+        <div class="h-px w-full bg-navy/10"></div>
+
+        <div>
+          <SectionHeading title="Infraestructura de seguridad pasiva para proyectos de edificación" accent="fire" />
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+            {fireProducts.map((p) => <ProductCard product={p} accent="fire" />)}
+          </div>
         </div>
       </div>
-
-      <div class="h-px w-full bg-navy/10"></div>
-
-      <div>
-        <SectionHeading title="Infraestructura de seguridad pasiva para proyectos de edificación" accent="fire" />
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-          {fireProducts.map((p) => <ProductCard product={p} accent="fire" />)}
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   <ContactHub />
 </BaseLayout>
