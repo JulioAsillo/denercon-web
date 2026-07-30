@@ -168,7 +168,7 @@ const layers = [
     // ── Velocidad de reproducción ────────────────────────────────
     // 1 = normal · 0.5 = mitad de velocidad · 0.75 = un poco más lento.
     // Los textos siguen sincronizados solos (se guían por currentTime).
-    const PLAYBACK_RATE = 0.5;
+    const PLAYBACK_RATE = 0.75;
     video.playbackRate = PLAYBACK_RATE;
     video.addEventListener("loadedmetadata", () => {
       video.playbackRate = PLAYBACK_RATE;
