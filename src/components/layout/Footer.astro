@@ -4,7 +4,7 @@ import CertificationsBand from "@components/layout/CertificationsBand.astro";
 
 const year = new Date().getFullYear();
 
-// Enlaces rápidos del footer.
+// Enlaces Rápidos del footer.
 // "Soluciones" y "Proyectos" se muestran como texto (href: null) porque esas
 // páginas no existen todavía; así no generan enlaces rotos (404).
 const links = [
@@ -39,7 +39,7 @@ const links = [
 
     <!-- Columna 2 -->
     <div class="flex flex-col gap-2">
-      <h3 class="font-bold text-white mb-2 uppercase tracking-wider text-sm">Enlaces rápidos</h3>
+      <h3 class="font-bold text-white mb-2 uppercase tracking-wider text-sm">Enlaces Rápidos</h3>
       {links.map((l) => (
         l.href ? (
           <a href={l.href} class="text-sky/80 hover:text-white transition-colors text-sm">{l.label}</a>
@@ -51,7 +51,7 @@ const links = [
 
     <!-- Columna 3 -->
     <div class="flex flex-col gap-4">
-      <h3 class="font-bold text-white uppercase tracking-wider text-sm">Oficina comercial</h3>
+      <h3 class="font-bold text-white uppercase tracking-wider text-sm">Oficina Comercial</h3>
 
       <div class="flex items-start gap-3">
         <span class="material-symbols-outlined text-blue text-[20px] mt-0.5" aria-hidden="true">location_on</span>

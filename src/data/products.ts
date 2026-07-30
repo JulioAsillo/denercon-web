@@ -74,7 +74,7 @@ export const floorProducts: Product[] = [
   {
     id: "laminado",
     title: "Pisos Laminados",
-    subtitle: "Alta resistencia comercial",
+    subtitle: "Alta Resistencia Comercial",
     image: laminado,
     alt: "Pasillo corporativo con piso laminado tono madera cálido, alto tránsito.",
     features: [
@@ -90,7 +90,7 @@ export const floorProducts: Product[] = [
   {
     id: "wpc",
     title: "Wall Panels (WPC)",
-    subtitle: "Revestimiento decorativo",
+    subtitle: "Revestimiento Decorativo",
     image: wallpanel,
     alt: "Panel de pared WPC ranurado vertical con luz indirecta rasante.",
     features: [
@@ -110,7 +110,7 @@ export const fireProducts: Product[] = [
   {
     id: "puertas",
     title: "Puertas y Portones Cortafuego",
-    subtitle: "Seguridad pasiva certificada",
+    subtitle: "Seguridad Pasiva Certificada",
     image: puertaNucleo,
     alt: "Puerta de acero entreabierta mostrando el núcleo de lana de roca / honeycomb.",
     badge: "Resistencia al Fuego: 3 Horas",
@@ -126,7 +126,7 @@ export const fireProducts: Product[] = [
   {
     id: "barras",
     title: "Barras Antipánico",
-    subtitle: "Vías de evacuación",
+    subtitle: "Vías de Evacuación",
     image: barra,
     alt: "Barra antipánico DT-F1200 en acero inoxidable pulido sobre puerta grafito.",
     features: [
@@ -141,7 +141,7 @@ export const fireProducts: Product[] = [
   {
     id: "herrajes",
     title: "Herrajes y Accesorios",
-    subtitle: "Complementos certificados",
+    subtitle: "Complementos Certificados",
     image: herrajes,
     alt: "Flat-lay de herrajes premium: cerraduras ANSI, cierrapuertas F8500, cinta intumescente.",
     features: [
